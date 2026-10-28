@@ -189,8 +189,22 @@
       box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
-    .submit-btn:active {
-      background: #334155;
+    .submit-btn.editing {
+      background: #2563eb;
+      border-color: #60a5fa;
+    }
+
+    .cancel-btn {
+      width: 100%;
+      min-height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
     }
 
     .history-header {
@@ -223,11 +237,17 @@
       position: relative;
     }
 
+    .log-item.editing-active {
+      border: 2px solid #2563eb;
+      background: #eff6ff;
+    }
+
     .log-main {
       display: flex;
       flex-direction: column;
       gap: 4px;
       padding-right: 12px;
+      flex: 1;
     }
 
     .log-wing {
@@ -248,18 +268,17 @@
       gap: 8px;
     }
 
-    .log-num {
-      font-weight: 800;
-      font-size: 1.1rem;
-      color: #0f172a;
+    .action-row {
+      display: flex;
+      gap: 6px;
     }
 
-    .delete-btn {
+    .action-btn {
       background: #f1f5f9;
       border: 1px solid #cbd5e1;
       color: #64748b;
-      width: 26px;
-      height: 26px;
+      width: 28px;
+      height: 28px;
       border-radius: 50%;
       display: flex;
       align-items: center;
@@ -269,13 +288,24 @@
       cursor: pointer;
       transition: all 0.15s ease;
       padding: 0;
-      line-height: 1;
+    }
+
+    .edit-btn:hover, .edit-btn:active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #1d4ed8;
     }
 
     .delete-btn:hover, .delete-btn:active {
       background: #ef4444;
       color: #ffffff;
       border-color: #dc2626;
+    }
+
+    .log-num {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: #0f172a;
     }
 
     .hidden {
@@ -305,7 +335,7 @@
     </header>
 
     <!-- Logging Form -->
-    <div class="card">
+    <div class="card" id="formCard">
       <form id="logForm">
         
         <!-- Date Input -->
@@ -416,7 +446,8 @@
           <textarea id="notes" rows="2" placeholder="Smooth line, tight proximity run..."></textarea>
         </div>
 
-        <button type="submit" class="submit-btn">+ Log Flight</button>
+        <button type="submit" class="submit-btn" id="submitBtn">+ Log Flight</button>
+        <button type="button" class="cancel-btn hidden" id="cancelEditBtn">Cancel Editing</button>
       </form>
     </div>
 
@@ -430,11 +461,10 @@
   </div>
 
   <script>
-    // Set default date to Today
     const flightDateInput = document.getElementById('flightDate');
     flightDateInput.value = new Date().toISOString().split('T')[0];
 
-    // --- SUPABASE CLOUD CONFIG (Optional - leave blank if offline only) ---
+    // --- SUPABASE CLOUD CONFIG ---
     const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE'; 
     const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
     
@@ -445,7 +475,6 @@
 
     const syncStatus = document.getElementById('syncStatus');
 
-    // Excel Spreadsheet Elevations Mapping
     const defaultSiteElevations = {
       "Bingen-South": 1600, "Bingen-East": 2110, "Syncline": 900, "Kiwanda": 100,
       "Mt Hood - Cooper Spur": 300, "Mt Hood - Palmer": 1900, "Rowena": 1800,
@@ -461,6 +490,8 @@
     localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
 
     let flights = JSON.parse(localStorage.getItem('speedfly_flights') || '[]');
+    let editingFlightId = null;
+
     let selectedWing = 'Dragonfly 18m';
     let selectedLaunchType = 'Foot launch';
     let selectedWindDesc = 'Dead';
@@ -468,6 +499,8 @@
     let selectedRelativeWind = 'Headwind';
 
     const logForm = document.getElementById('logForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelEditBtn = document.getElementById('cancelEditBtn');
     const wingPillGrid = document.getElementById('wingPillGrid');
     const launchTypeGrid = document.getElementById('launchTypeGrid');
     const windDescGrid = document.getElementById('windDescGrid');
@@ -559,13 +592,26 @@
 
     launchSiteSelect.addEventListener('change', updateElevationForSelectedSite);
 
-    launchElevation.addEventListener('input', (e) => {
-      const currentSite = launchSiteSelect.value;
-      if (currentSite && currentSite !== '__ADD_CUSTOM__') {
-        siteElevations[currentSite] = parseInt(e.target.value) || 0;
-        localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+    function setGridActiveValue(gridElement, value, setter) {
+      let found = false;
+      gridElement.querySelectorAll('.pill-btn').forEach(b => {
+        if (b.dataset.value === value) {
+          b.classList.add('active');
+          found = true;
+        } else {
+          b.classList.remove('active');
+        }
+      });
+      if (!found && gridElement === wingPillGrid && value) {
+        const newBtn = document.createElement('button');
+        newBtn.type = 'button';
+        newBtn.className = 'pill-btn active';
+        newBtn.dataset.value = value;
+        newBtn.textContent = value;
+        wingPillGrid.insertBefore(newBtn, showCustomWingBtn);
       }
-    });
+      setter(value);
+    }
 
     function handlePillClick(gridElement, callback) {
       gridElement.addEventListener('click', (e) => {
@@ -591,14 +637,7 @@
     saveCustomWingBtn.addEventListener('click', () => {
       const val = customWingInput.value.trim();
       if (!val) return;
-      const newBtn = document.createElement('button');
-      newBtn.type = 'button';
-      newBtn.className = 'pill-btn active';
-      newBtn.dataset.value = val;
-      newBtn.textContent = val;
-      document.querySelectorAll('#wingPillGrid .pill-btn').forEach(b => b.classList.remove('active'));
-      wingPillGrid.insertBefore(newBtn, showCustomWingBtn);
-      selectedWing = val;
+      setGridActiveValue(wingPillGrid, val, v => selectedWing = v);
       customWingInput.value = '';
       customWingContainer.classList.add('hidden');
     });
@@ -608,7 +647,6 @@
       const elevVal = parseInt(launchElevation.value) || 0;
       const wSpeed = document.getElementById('windSpeed').value.trim();
       
-      // Parse selected or default date
       const rawDateVal = flightDateInput.value;
       let formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       if (rawDateVal) {
@@ -619,34 +657,100 @@
         }
       }
 
-      const newFlight = {
-        id: Date.now(),
-        flightNum: flights.length + 1,
-        date: formattedDate,
-        wing: selectedWing,
-        site: launchSiteSelect.value,
-        elevation: elevVal,
-        launchType: selectedLaunchType,
-        windSpeed: wSpeed ? `${wSpeed} kt` : '',
-        windDesc: selectedWindDesc,
-        compass: selectedCompass,
-        relativeWind: selectedRelativeWind,
-        notes: document.getElementById('notes').value.trim()
-      };
+      if (editingFlightId) {
+        // Update existing flight
+        const flightIndex = flights.findIndex(f => f.id === editingFlightId);
+        if (flightIndex !== -1) {
+          flights[flightIndex] = {
+            ...flights[flightIndex],
+            date: formattedDate,
+            rawDate: rawDateVal,
+            wing: selectedWing,
+            site: launchSiteSelect.value,
+            elevation: elevVal,
+            launchType: selectedLaunchType,
+            windSpeed: wSpeed ? (wSpeed.includes('kt') ? wSpeed : `${wSpeed} kt`) : '',
+            windDesc: selectedWindDesc,
+            compass: selectedCompass,
+            relativeWind: selectedRelativeWind,
+            notes: document.getElementById('notes').value.trim()
+          };
+          pushFlightToCloud(flights[flightIndex]);
+        }
+        resetForm();
+      } else {
+        // Create new flight
+        const newFlight = {
+          id: Date.now(),
+          flightNum: flights.length + 1,
+          date: formattedDate,
+          rawDate: rawDateVal,
+          wing: selectedWing,
+          site: launchSiteSelect.value,
+          elevation: elevVal,
+          launchType: selectedLaunchType,
+          windSpeed: wSpeed ? `${wSpeed} kt` : '',
+          windDesc: selectedWindDesc,
+          compass: selectedCompass,
+          relativeWind: selectedRelativeWind,
+          notes: document.getElementById('notes').value.trim()
+        };
 
-      flights.unshift(newFlight);
+        flights.unshift(newFlight);
+        pushFlightToCloud(newFlight);
+        resetForm();
+      }
+
       localStorage.setItem('speedfly_flights', JSON.stringify(flights));
-      pushFlightToCloud(newFlight);
-      
+      render();
+    });
+
+    function editFlight(id) {
+      const flight = flights.find(f => f.id === id);
+      if (!flight) return;
+
+      editingFlightId = id;
+      submitBtn.textContent = '💾 Save Changes';
+      submitBtn.classList.add('editing');
+      cancelEditBtn.classList.remove('hidden');
+
+      if (flight.rawDate) {
+        flightDateInput.value = flight.rawDate;
+      }
+
+      setGridActiveValue(wingPillGrid, flight.wing || 'Dragonfly 18m', v => selectedWing = v);
+      setGridActiveValue(launchTypeGrid, flight.launchType || 'Foot launch', v => selectedLaunchType = v);
+      setGridActiveValue(windDescGrid, flight.windDesc || 'Dead', v => selectedWindDesc = v);
+      setGridActiveValue(compassGrid, flight.compass || 'N', v => selectedCompass = v);
+      setGridActiveValue(relativeWindGrid, flight.relativeWind || 'Headwind', v => selectedRelativeWind = v);
+
+      launchSiteSelect.value = flight.site;
+      launchElevation.value = flight.elevation || 0;
+      document.getElementById('windSpeed').value = flight.windSpeed ? parseInt(flight.windSpeed) : '';
+      document.getElementById('notes').value = flight.notes || '';
+
+      document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
+      render();
+    }
+
+    function resetForm() {
+      editingFlightId = null;
+      submitBtn.textContent = '+ Log Flight';
+      submitBtn.classList.remove('editing');
+      cancelEditBtn.classList.add('hidden');
+      flightDateInput.value = new Date().toISOString().split('T')[0];
       document.getElementById('notes').value = '';
       document.getElementById('windSpeed').value = '';
-      // Reset date to today after submit
-      flightDateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    cancelEditBtn.addEventListener('click', () => {
+      resetForm();
       render();
     });
 
     function deleteFlight(id, flightNum) {
       if (confirm(`Are you sure you want to delete Flight #${flightNum}?`)) {
+        if (editingFlightId === id) resetForm();
         flights = flights.filter(f => f.id !== id);
         localStorage.setItem('speedfly_flights', JSON.stringify(flights));
         deleteFlightFromCloud(id);
@@ -679,7 +783,7 @@
       }
 
       logList.innerHTML = flights.map(f => `
-        <div class="log-item">
+        <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
           <div class="log-main">
             <div class="log-wing">${f.wing}</div>
             <div class="log-meta">${f.site} (${f.elevation ? f.elevation + ' ft' : 'N/A'}) • ${f.launchType}</div>
@@ -687,7 +791,10 @@
             ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569;">"${f.notes}"</div>` : ''}
           </div>
           <div class="log-right-col">
-            <button type="button" class="delete-btn" onclick="deleteFlight(${f.id}, ${f.flightNum})" title="Delete entry">✕</button>
+            <div class="action-row">
+              <button type="button" class="action-btn edit-btn" onclick="editFlight(${f.id})" title="Edit entry">✏️</button>
+              <button type="button" class="action-btn delete-btn" onclick="deleteFlight(${f.id}, ${f.flightNum})" title="Delete entry">✕</button>
+            </div>
             <div class="log-num">#${f.flightNum}</div>
           </div>
         </div>
