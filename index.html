@@ -27,7 +27,7 @@
       color: #111827;
       margin: 0;
       padding: 16px;
-      padding-bottom: 90px; /* Space for bottom navbar */
+      padding-bottom: 90px;
     }
 
     .container {
@@ -88,7 +88,6 @@
       color: #059669;
     }
 
-    /* Tab View Management */
     .tab-content {
       display: none;
     }
@@ -97,7 +96,6 @@
       display: block;
     }
 
-    /* Form Card */
     .card {
       background-color: #0f172a;
       background-image: linear-gradient(rgba(15, 23, 42, 0.40), rgba(15, 23, 42, 0.50)), url('IMG_7689_3.jpg');
@@ -152,11 +150,6 @@
       margin-bottom: 8px;
     }
 
-    .settings-card label {
-      color: #0f172a;
-      text-shadow: none;
-    }
-
     .pill-grid {
       display: flex;
       flex-wrap: wrap;
@@ -188,12 +181,6 @@
       border-color: #ffffff;
       font-weight: 800;
       box-shadow: 0 2px 6px rgba(0,0,0,0.35);
-    }
-
-    .add-custom-btn {
-      background: rgba(255, 255, 255, 0.95);
-      border: 2px dashed #0f172a;
-      color: #0f172a;
     }
 
     input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
@@ -264,7 +251,6 @@
       cursor: pointer;
     }
 
-    /* Flight Log Item Styles */
     .log-item {
       background: #ffffff;
       border: 1px solid #e5e7eb;
@@ -290,7 +276,6 @@
       flex: 1;
     }
 
-    /* Updated Location Title Focus */
     .log-site-header {
       font-weight: 800;
       color: #0f172a;
@@ -356,7 +341,6 @@
       color: #0f172a;
     }
 
-    /* Bottom Navigation Bar */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -393,18 +377,23 @@
       font-size: 1.25rem;
     }
 
-    /* Settings Item Lists */
     .settings-list-item {
       display: flex;
-      justify-content: space-between;
+      gap: 8px;
       align-items: center;
       padding: 8px 0;
       border-bottom: 1px solid #f1f5f9;
     }
 
+    .settings-list-item input[type="text"] {
+      padding: 8px;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
     .settings-list-item input[type="number"] {
-      width: 90px;
-      padding: 6px;
+      width: 80px;
+      padding: 8px;
       font-size: 0.9rem;
     }
 
@@ -439,7 +428,6 @@
       <div class="card" id="formCard">
         <form id="logForm">
           
-          <!-- Date & Time Input Row -->
           <div class="form-group">
             <div class="date-time-row">
               <div>
@@ -453,29 +441,21 @@
             </div>
           </div>
 
-          <!-- Wing Selection Pills -->
           <div class="form-group">
             <label>Wing</label>
-            <div class="pill-grid" id="wingPillGrid">
-              <!-- Dynamically populated -->
-            </div>
+            <div class="pill-grid" id="wingPillGrid"></div>
           </div>
 
-          <!-- Launch Site Dropdown -->
           <div class="form-group">
             <label for="launchSiteSelect">Launch Site</label>
-            <select id="launchSiteSelect">
-              <!-- Dynamically populated -->
-            </select>
+            <select id="launchSiteSelect"></select>
           </div>
 
-          <!-- Launch Elevation -->
           <div class="form-group">
             <label for="launchElevation">Launch Elevation (ft)</label>
             <input type="number" id="launchElevation" placeholder="e.g. 1600">
           </div>
 
-          <!-- Launch Type -->
           <div class="form-group">
             <label>Launch Type</label>
             <div class="pill-grid" id="launchTypeGrid">
@@ -484,7 +464,6 @@
             </div>
           </div>
 
-          <!-- Wind Conditions & Direction -->
           <div class="form-group">
             <label>Wind Speed & Quality</label>
             <div style="margin-bottom: 8px;">
@@ -518,7 +497,6 @@
             </div>
           </div>
 
-          <!-- Notes -->
           <div class="form-group">
             <label for="notes">Notes / Conditions</label>
             <textarea id="notes" rows="2" placeholder="Smooth line, tight proximity run..."></textarea>
@@ -569,7 +547,6 @@
 
   </div>
 
-  <!-- BOTTOM NAVIGATION BAR -->
   <nav class="bottom-nav">
     <button class="nav-item active" data-tab="tab-log">
       <span class="nav-icon">✏️</span>
@@ -586,7 +563,6 @@
   </nav>
 
   <script>
-    // Navigation Tabs Logic
     const navItems = document.querySelectorAll('.nav-item');
     const tabContents = document.querySelectorAll('.tab-content');
 
@@ -624,7 +600,6 @@
     }
     setDefaultDateTime();
 
-    // --- SUPABASE CLOUD CONFIG ---
     const SUPABASE_URL = 'https://adztevoxbgftaifwzbyj.supabase.co'; 
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkenRldm94YmdmdGFpZnd6YnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNDMxNjksImV4cCI6MjEwODgxOTE2OX0.vv4_h1HxtUW9IqnB5ogi9GisZO2bOPArqWcLDne_Its';
     
@@ -845,7 +820,7 @@
       reindexFlightNumbers();
       localStorage.setItem('speedfly_flights', JSON.stringify(flights));
       render();
-      switchTab('tab-history'); // Redirect to Flight Log after logging
+      switchTab('tab-history');
     });
 
     function editFlight(id) {
@@ -897,29 +872,38 @@
       }
     }
 
-    // --- SETTINGS TAB MANAGEMENT ---
+    // --- EDITABLE LAUNCH SITE NAMES & ELEVATIONS ---
     function renderSettings() {
-      // Sites List
       const sitesList = document.getElementById('sitesSettingsList');
       sitesList.innerHTML = Object.keys(siteElevations).map(site => `
         <div class="settings-list-item">
-          <span style="font-weight: 600; font-size: 0.9rem;">${site}</span>
-          <div style="display: flex; gap: 8px; align-items: center;">
-            <input type="number" value="${siteElevations[site]}" onchange="updateSiteElev('${site}', this.value)">
-            <button type="button" class="action-btn delete-btn" onclick="deleteSite('${site}')">✕</button>
-          </div>
+          <input type="text" value="${site}" onchange="updateSiteName('${site}', this.value)">
+          <input type="number" value="${siteElevations[site]}" onchange="updateSiteElev('${site}', this.value)" placeholder="ft">
+          <button type="button" class="action-btn delete-btn" onclick="deleteSite('${site}')">✕</button>
         </div>
       `).join('');
 
-      // Wings List
       const wingsList = document.getElementById('wingsSettingsList');
       wingsList.innerHTML = customWings.map(w => `
         <div class="settings-list-item">
-          <span style="font-weight: 600; font-size: 0.9rem;">${w}</span>
+          <span style="font-weight: 600; font-size: 0.9rem; flex: 1;">${w}</span>
           <button type="button" class="action-btn delete-btn" onclick="deleteWing('${w}')">✕</button>
         </div>
       `).join('');
     }
+
+    window.updateSiteName = function(oldName, newName) {
+      const trimmedNew = newName.trim();
+      if (!trimmedNew || oldName === trimmedNew) return;
+      
+      const currentElev = siteElevations[oldName];
+      delete siteElevations[oldName];
+      siteElevations[trimmedNew] = currentElev;
+      
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+      populateSitesDropdown();
+      renderSettings();
+    };
 
     window.updateSiteElev = function(site, newElev) {
       siteElevations[site] = parseInt(newElev) || 0;
@@ -1005,11 +989,9 @@
       logList.innerHTML = displayFlights.map(f => `
         <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
           <div class="log-main">
-            <!-- Location Header First -->
             <div class="log-site-header">${f.site}</div>
             <div class="log-datetime-subheader">${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
             
-            <!-- Details Subtext -->
             <div class="log-meta"><b>${f.wing}</b> • ${f.elevation ? f.elevation + ' ft' : 'N/A'} • ${f.launchType}</div>
             <div class="log-meta">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind})</div>
             ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569; margin-top: 2px;">"${f.notes}"</div>` : ''}
