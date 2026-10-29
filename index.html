@@ -10,7 +10,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Speedfly Log">
   
-  <!-- Uses your uploaded mountain photo as the iPhone Home Screen App Icon -->
+  <!-- Uses uploaded mountain photo as iPhone Home Screen Icon -->
   <link rel="apple-touch-icon" href="IMG_7689_3.jpg">
 
   <!-- Supabase JS Client for Cloud Sync -->
@@ -107,6 +107,15 @@
       margin-bottom: 18px;
     }
 
+    .date-time-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .date-time-row > div {
+      flex: 1;
+    }
+
     label {
       display: block;
       font-size: 0.85rem;
@@ -157,7 +166,7 @@
       color: #0f172a;
     }
 
-    input[type="text"], input[type="number"], input[type="date"], select, textarea {
+    input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
       width: 100%;
       padding: 14px;
       background: rgba(255, 255, 255, 0.92);
@@ -169,7 +178,7 @@
       box-sizing: border-box;
     }
 
-    input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, select:focus, textarea:focus {
+    input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #0f172a;
       background: #ffffff;
@@ -338,10 +347,18 @@
     <div class="card" id="formCard">
       <form id="logForm">
         
-        <!-- Date Input -->
+        <!-- Date & Time Input Row -->
         <div class="form-group">
-          <label for="flightDate">Flight Date</label>
-          <input type="date" id="flightDate">
+          <div class="date-time-row">
+            <div>
+              <label for="flightDate">Flight Date</label>
+              <input type="date" id="flightDate">
+            </div>
+            <div>
+              <label for="flightTime">Launch Time</label>
+              <input type="time" id="flightTime">
+            </div>
+          </div>
         </div>
 
         <!-- Wing Selection Pills -->
@@ -462,11 +479,20 @@
 
   <script>
     const flightDateInput = document.getElementById('flightDate');
-    flightDateInput.value = new Date().toISOString().split('T')[0];
+    const flightTimeInput = document.getElementById('flightTime');
+    
+    function setDefaultDateTime() {
+      const now = new Date();
+      flightDateInput.value = now.toISOString().split('T')[0];
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      flightTimeInput.value = `${hours}:${minutes}`;
+    }
+    setDefaultDateTime();
 
     // --- SUPABASE CLOUD CONFIG ---
-    const SUPABASE_URL = 'YOUR_SUPABASE_URL_HERE'; 
-    const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
+    const SUPABASE_URL = 'https://adztevoxbgftaifwzbyj.supabase.co'; 
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkenRldm94YmdmdGFpZnd6YnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNDMxNjksImV4cCI6MjEwODgxOTE2OX0.vv4_h1HxtUW9IqnB5ogi9GisZO2bOPArqWcLDne_Its';
     
     let supabaseClient = null;
     if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && window.supabase) {
@@ -517,6 +543,24 @@
     const logList = document.getElementById('logList');
     const exportBtn = document.getElementById('exportBtn');
 
+    function getFlightTimestamp(rawDate, rawTime) {
+      if (!rawDate) return Date.now();
+      const timeStr = rawTime || '12:00';
+      return new Date(`${rawDate}T${timeStr}:00`).getTime() || Date.now();
+    }
+
+    function reindexFlightNumbers() {
+      flights.sort((a, b) => {
+        const timeA = getFlightTimestamp(a.rawDate, a.rawTime);
+        const timeB = getFlightTimestamp(b.rawDate, b.rawTime);
+        return timeA - timeB;
+      });
+
+      flights.forEach((f, idx) => {
+        f.flightNum = idx + 1;
+      });
+    }
+
     async function syncWithCloud() {
       if (!supabaseClient) {
         syncStatus.textContent = "⚡ Offline Mode (Local Only)";
@@ -537,7 +581,8 @@
               merged.push(remoteFlight);
             }
           });
-          flights = merged.sort((a, b) => b.id - a.id);
+          flights = merged;
+          reindexFlightNumbers();
           localStorage.setItem('speedfly_flights', JSON.stringify(flights));
           render();
         }
@@ -648,6 +693,8 @@
       const wSpeed = document.getElementById('windSpeed').value.trim();
       
       const rawDateVal = flightDateInput.value;
+      const rawTimeVal = flightTimeInput.value;
+
       let formattedDate = new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       if (rawDateVal) {
         const parts = rawDateVal.split('-');
@@ -658,13 +705,13 @@
       }
 
       if (editingFlightId) {
-        // Update existing flight
         const flightIndex = flights.findIndex(f => f.id === editingFlightId);
         if (flightIndex !== -1) {
           flights[flightIndex] = {
             ...flights[flightIndex],
             date: formattedDate,
             rawDate: rawDateVal,
+            rawTime: rawTimeVal,
             wing: selectedWing,
             site: launchSiteSelect.value,
             elevation: elevVal,
@@ -679,12 +726,12 @@
         }
         resetForm();
       } else {
-        // Create new flight
         const newFlight = {
           id: Date.now(),
-          flightNum: flights.length + 1,
+          flightNum: 0,
           date: formattedDate,
           rawDate: rawDateVal,
+          rawTime: rawTimeVal,
           wing: selectedWing,
           site: launchSiteSelect.value,
           elevation: elevVal,
@@ -696,11 +743,12 @@
           notes: document.getElementById('notes').value.trim()
         };
 
-        flights.unshift(newFlight);
+        flights.push(newFlight);
         pushFlightToCloud(newFlight);
         resetForm();
       }
 
+      reindexFlightNumbers();
       localStorage.setItem('speedfly_flights', JSON.stringify(flights));
       render();
     });
@@ -714,9 +762,8 @@
       submitBtn.classList.add('editing');
       cancelEditBtn.classList.remove('hidden');
 
-      if (flight.rawDate) {
-        flightDateInput.value = flight.rawDate;
-      }
+      if (flight.rawDate) flightDateInput.value = flight.rawDate;
+      if (flight.rawTime) flightTimeInput.value = flight.rawTime;
 
       setGridActiveValue(wingPillGrid, flight.wing || 'Dragonfly 18m', v => selectedWing = v);
       setGridActiveValue(launchTypeGrid, flight.launchType || 'Foot launch', v => selectedLaunchType = v);
@@ -738,7 +785,7 @@
       submitBtn.textContent = '+ Log Flight';
       submitBtn.classList.remove('editing');
       cancelEditBtn.classList.add('hidden');
-      flightDateInput.value = new Date().toISOString().split('T')[0];
+      setDefaultDateTime();
       document.getElementById('notes').value = '';
       document.getElementById('windSpeed').value = '';
     }
@@ -752,6 +799,7 @@
       if (confirm(`Are you sure you want to delete Flight #${flightNum}?`)) {
         if (editingFlightId === id) resetForm();
         flights = flights.filter(f => f.id !== id);
+        reindexFlightNumbers();
         localStorage.setItem('speedfly_flights', JSON.stringify(flights));
         deleteFlightFromCloud(id);
         render();
@@ -760,9 +808,10 @@
 
     exportBtn.addEventListener('click', () => {
       if (flights.length === 0) return alert('No flights logged yet!');
-      let csv = 'Flight #,Date,Wing,Launch Site,Elevation (ft),Launch Type,Wind Speed,Wind Quality,Compass Dir,Relative Wind,Notes\n';
-      flights.forEach(f => {
-        csv += `"${f.flightNum}","${f.date}","${f.wing}","${f.site}","${f.elevation || 0}","${f.launchType}","${f.windSpeed || ''}","${f.windDesc || ''}","${f.compass || ''}","${f.relativeWind || ''}","${f.notes}"\n`;
+      let csv = 'Flight #,Date,Time,Wing,Launch Site,Elevation (ft),Launch Type,Wind Speed,Wind Quality,Compass Dir,Relative Wind,Notes\n';
+      const sortedForExport = [...flights].reverse();
+      sortedForExport.forEach(f => {
+        csv += `"${f.flightNum}","${f.date}","${f.rawTime || ''}","${f.wing}","${f.site}","${f.elevation || 0}","${f.launchType}","${f.windSpeed || ''}","${f.windDesc || ''}","${f.compass || ''}","${f.relativeWind || ''}","${f.notes}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
       const url = window.URL.createObjectURL(blob);
@@ -782,12 +831,14 @@
         return;
       }
 
-      logList.innerHTML = flights.map(f => `
+      const displayFlights = [...flights].reverse();
+
+      logList.innerHTML = displayFlights.map(f => `
         <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
           <div class="log-main">
             <div class="log-wing">${f.wing}</div>
             <div class="log-meta">${f.site} (${f.elevation ? f.elevation + ' ft' : 'N/A'}) • ${f.launchType}</div>
-            <div class="log-meta" style="color: #0f172a; font-weight: 600;">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind}) • ${f.date}</div>
+            <div class="log-meta" style="color: #0f172a; font-weight: 600;">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind}) • ${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
             ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569;">"${f.notes}"</div>` : ''}
           </div>
           <div class="log-right-col">
@@ -802,6 +853,7 @@
     }
 
     updateElevationForSelectedSite();
+    reindexFlightNumbers();
     render();
     window.addEventListener('online', syncWithCloud);
     syncWithCloud();
