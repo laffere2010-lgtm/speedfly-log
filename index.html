@@ -10,7 +10,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Speedfly Log">
   
-  <!-- Uses uploaded mountain photo as iPhone Home Screen Icon -->
   <link rel="apple-touch-icon" href="IMG_7689_3.jpg">
 
   <!-- Supabase JS Client for Cloud Sync -->
@@ -28,7 +27,7 @@
       color: #111827;
       margin: 0;
       padding: 16px;
-      padding-bottom: 40px;
+      padding-bottom: 90px; /* Space for bottom navbar */
     }
 
     .container {
@@ -40,9 +39,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       background: #ffffff;
-      padding: 16px;
+      padding: 14px 16px;
       border-radius: 12px;
       border: 1px solid #e5e7eb;
       box-shadow: 0 1px 3px rgba(0,0,0,0.05);
@@ -55,12 +54,12 @@
     }
 
     .app-icon-svg {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
     }
 
     h1 {
-      font-size: 1.25rem;
+      font-size: 1.2rem;
       margin: 0;
       font-weight: 800;
       color: #0f172a;
@@ -76,10 +75,10 @@
     .stat-badge {
       background: #f1f5f9;
       color: #0f172a;
-      padding: 4px 10px;
+      padding: 3px 8px;
       border-radius: 20px;
       font-weight: 700;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       border: 1px solid #cbd5e1;
     }
 
@@ -89,7 +88,16 @@
       color: #059669;
     }
 
-    /* Main Logging Card with Background Photo */
+    /* Tab View Management */
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* Form Card */
     .card {
       background-color: #0f172a;
       background-image: linear-gradient(rgba(15, 23, 42, 0.40), rgba(15, 23, 42, 0.50)), url('IMG_7689_3.jpg');
@@ -101,6 +109,23 @@
       border: 1px solid #cbd5e1;
       box-shadow: 0 4px 14px rgba(0,0,0,0.2);
       color: #ffffff;
+    }
+
+    .settings-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+
+    .settings-card h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      color: #0f172a;
+      border-bottom: 1px solid #f1f5f9;
+      padding-bottom: 8px;
     }
 
     .form-group {
@@ -125,6 +150,11 @@
       color: #ffffff;
       text-shadow: 0 1px 3px rgba(0,0,0,0.8);
       margin-bottom: 8px;
+    }
+
+    .settings-card label {
+      color: #0f172a;
+      text-shadow: none;
     }
 
     .pill-grid {
@@ -234,6 +264,7 @@
       cursor: pointer;
     }
 
+    /* Flight Log Item Styles */
     .log-item {
       background: #ffffff;
       border: 1px solid #e5e7eb;
@@ -254,20 +285,28 @@
     .log-main {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 3px;
       padding-right: 12px;
       flex: 1;
     }
 
-    .log-wing {
-      font-weight: 700;
+    /* Updated Location Title Focus */
+    .log-site-header {
+      font-weight: 800;
       color: #0f172a;
-      font-size: 1rem;
+      font-size: 1.05rem;
+    }
+
+    .log-datetime-subheader {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #2563eb;
+      margin-bottom: 2px;
     }
 
     .log-meta {
       font-size: 0.85rem;
-      color: #64748b;
+      color: #475569;
     }
 
     .log-right-col {
@@ -317,6 +356,58 @@
       color: #0f172a;
     }
 
+    /* Bottom Navigation Bar */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
+      display: flex;
+      justify-content: space-around;
+      padding: 8px 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      z-index: 1000;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 0.75rem;
+      font-weight: 700;
+      gap: 4px;
+      cursor: pointer;
+      width: 33.33%;
+    }
+
+    .nav-item.active {
+      color: #0f172a;
+    }
+
+    .nav-icon {
+      font-size: 1.25rem;
+    }
+
+    /* Settings Item Lists */
+    .settings-list-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .settings-list-item input[type="number"] {
+      width: 90px;
+      padding: 6px;
+      font-size: 0.9rem;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -343,141 +434,184 @@
       </div>
     </header>
 
-    <!-- Logging Form -->
-    <div class="card" id="formCard">
-      <form id="logForm">
-        
-        <!-- Date & Time Input Row -->
-        <div class="form-group">
-          <div class="date-time-row">
-            <div>
-              <label for="flightDate">Flight Date</label>
-              <input type="date" id="flightDate">
-            </div>
-            <div>
-              <label for="flightTime">Launch Time</label>
-              <input type="time" id="flightTime">
-            </div>
-          </div>
-        </div>
-
-        <!-- Wing Selection Pills -->
-        <div class="form-group">
-          <label>Wing</label>
-          <div class="pill-grid" id="wingPillGrid">
-            <button type="button" class="pill-btn active" data-value="Dragonfly 18m">Dragonfly 18m</button>
-            <button type="button" class="pill-btn" data-value="Dragonfly 16m">Dragonfly 16m</button>
-            <button type="button" class="pill-btn add-custom-btn" id="showCustomWingBtn">+ Custom Wing</button>
-          </div>
+    <!-- TAB 1: LOG FLIGHT FORM -->
+    <div id="tab-log" class="tab-content active">
+      <div class="card" id="formCard">
+        <form id="logForm">
           
-          <div id="customWingContainer" class="hidden" style="margin-top: 10px;">
-            <div style="display: flex; gap: 8px;">
-              <input type="text" id="customWingInput" placeholder="Enter wing model name...">
-              <button type="button" id="saveCustomWingBtn" style="padding: 0 16px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
+          <!-- Date & Time Input Row -->
+          <div class="form-group">
+            <div class="date-time-row">
+              <div>
+                <label for="flightDate">Flight Date</label>
+                <input type="date" id="flightDate">
+              </div>
+              <div>
+                <label for="flightTime">Launch Time</label>
+                <input type="time" id="flightTime">
+              </div>
             </div>
           </div>
-        </div>
 
-        <!-- Launch Site Dropdown -->
-        <div class="form-group">
-          <label for="launchSiteSelect">Launch Site</label>
-          <select id="launchSiteSelect">
-            <option value="Bingen-South">Bingen-South</option>
-            <option value="Bingen-East">Bingen-East</option>
-            <option value="Syncline">Syncline</option>
-            <option value="Kiwanda">Kiwanda</option>
-            <option value="Mt Hood - Cooper Spur">Mt Hood - Cooper Spur</option>
-            <option value="Mt Hood - Palmer">Mt Hood - Palmer</option>
-            <option value="Rowena">Rowena</option>
-            <option value="Dougs Beach">Dougs Beach</option>
-            <option value="Tiger">Tiger</option>
-            <option value="Chelan-Dos">Chelan-Dos</option>
-            <option value="Chelan-Tres">Chelan-Tres</option>
-            <option value="Chelan-Shitshow">Chelan-Shitshow</option>
-            <option value="Chelan-FYIG">Chelan-FYIG</option>
-            <option value="Chelan-Pirates">Chelan-Pirates</option>
-            <option value="Chelan- Deer Mountain">Chelan- Deer Mountain</option>
-            <option value="Chelan- Airport ridge">Chelan- Airport ridge</option>
-            <option value="Raptor Ride">Raptor Ride</option>
-            <option value="Winchester Mountain">Winchester Mountain</option>
-            <option value="Maury Island">Maury Island</option>
-            <option value="Lauterbrunnen - Murren">Lauterbrunnen - Murren</option>
-            <option value="Lauterbrunnen - Manlichen North">Lauterbrunnen - Manlichen North</option>
-            <option value="Lauterbrunnen - Manlichen West">Lauterbrunnen - Manlichen West</option>
-            <option value="__ADD_CUSTOM__">+ Add Custom Site...</option>
-          </select>
-        </div>
-
-        <!-- Launch Elevation -->
-        <div class="form-group">
-          <label for="launchElevation">Launch Elevation (ft)</label>
-          <input type="number" id="launchElevation" placeholder="e.g. 1600">
-        </div>
-
-        <!-- Launch Type -->
-        <div class="form-group">
-          <label>Launch Type</label>
-          <div class="pill-grid" id="launchTypeGrid">
-            <button type="button" class="pill-btn active" data-value="Foot launch" style="flex: 1 1 calc(50% - 6px);">Foot Launch</button>
-            <button type="button" class="pill-btn" data-value="Ski launch" style="flex: 1 1 calc(50% - 6px);">Ski Launch</button>
-          </div>
-        </div>
-
-        <!-- Wind Conditions & Direction -->
-        <div class="form-group">
-          <label>Wind Speed & Quality</label>
-          <div style="margin-bottom: 8px;">
-            <input type="number" id="windSpeed" placeholder="Wind Speed (kt / mph)">
-          </div>
-          <div class="pill-grid" id="windDescGrid" style="margin-bottom: 12px;">
-            <button type="button" class="pill-btn active" data-value="Dead">Dead</button>
-            <button type="button" class="pill-btn" data-value="Smooth">Smooth</button>
-            <button type="button" class="pill-btn" data-value="Punchy">Punchy</button>
-            <button type="button" class="pill-btn" data-value="Moderate Turb">Mod Turb</button>
-            <button type="button" class="pill-btn" data-value="Severe Turb">Sev Turb</button>
+          <!-- Wing Selection Pills -->
+          <div class="form-group">
+            <label>Wing</label>
+            <div class="pill-grid" id="wingPillGrid">
+              <!-- Dynamically populated -->
+            </div>
           </div>
 
-          <label style="margin-top: 10px;">Compass Direction</label>
-          <div class="pill-grid" id="compassGrid" style="margin-bottom: 12px;">
-            <button type="button" class="pill-btn active" data-value="N">N</button>
-            <button type="button" class="pill-btn" data-value="NE">NE</button>
-            <button type="button" class="pill-btn" data-value="E">E</button>
-            <button type="button" class="pill-btn" data-value="SE">SE</button>
-            <button type="button" class="pill-btn" data-value="S">S</button>
-            <button type="button" class="pill-btn" data-value="SW">SW</button>
-            <button type="button" class="pill-btn" data-value="W">W</button>
-            <button type="button" class="pill-btn" data-value="NW">NW</button>
+          <!-- Launch Site Dropdown -->
+          <div class="form-group">
+            <label for="launchSiteSelect">Launch Site</label>
+            <select id="launchSiteSelect">
+              <!-- Dynamically populated -->
+            </select>
           </div>
 
-          <label style="margin-top: 10px;">Relative Wind Vector</label>
-          <div class="pill-grid" id="relativeWindGrid">
-            <button type="button" class="pill-btn active" data-value="Headwind">Headwind</button>
-            <button type="button" class="pill-btn" data-value="Crosswind">Crosswind</button>
-            <button type="button" class="pill-btn" data-value="Tailwind">Tailwind</button>
+          <!-- Launch Elevation -->
+          <div class="form-group">
+            <label for="launchElevation">Launch Elevation (ft)</label>
+            <input type="number" id="launchElevation" placeholder="e.g. 1600">
           </div>
-        </div>
 
-        <!-- Notes -->
-        <div class="form-group">
-          <label for="notes">Notes / Conditions</label>
-          <textarea id="notes" rows="2" placeholder="Smooth line, tight proximity run..."></textarea>
-        </div>
+          <!-- Launch Type -->
+          <div class="form-group">
+            <label>Launch Type</label>
+            <div class="pill-grid" id="launchTypeGrid">
+              <button type="button" class="pill-btn active" data-value="Foot launch" style="flex: 1 1 calc(50% - 6px);">Foot Launch</button>
+              <button type="button" class="pill-btn" data-value="Ski launch" style="flex: 1 1 calc(50% - 6px);">Ski Launch</button>
+            </div>
+          </div>
 
-        <button type="submit" class="submit-btn" id="submitBtn">+ Log Flight</button>
-        <button type="button" class="cancel-btn hidden" id="cancelEditBtn">Cancel Editing</button>
-      </form>
+          <!-- Wind Conditions & Direction -->
+          <div class="form-group">
+            <label>Wind Speed & Quality</label>
+            <div style="margin-bottom: 8px;">
+              <input type="number" id="windSpeed" placeholder="Wind Speed (kt / mph)">
+            </div>
+            <div class="pill-grid" id="windDescGrid" style="margin-bottom: 12px;">
+              <button type="button" class="pill-btn active" data-value="Dead">Dead</button>
+              <button type="button" class="pill-btn" data-value="Smooth">Smooth</button>
+              <button type="button" class="pill-btn" data-value="Punchy">Punchy</button>
+              <button type="button" class="pill-btn" data-value="Moderate Turb">Mod Turb</button>
+              <button type="button" class="pill-btn" data-value="Severe Turb">Sev Turb</button>
+            </div>
+
+            <label style="margin-top: 10px;">Compass Direction</label>
+            <div class="pill-grid" id="compassGrid" style="margin-bottom: 12px;">
+              <button type="button" class="pill-btn active" data-value="N">N</button>
+              <button type="button" class="pill-btn" data-value="NE">NE</button>
+              <button type="button" class="pill-btn" data-value="E">E</button>
+              <button type="button" class="pill-btn" data-value="SE">SE</button>
+              <button type="button" class="pill-btn" data-value="S">S</button>
+              <button type="button" class="pill-btn" data-value="SW">SW</button>
+              <button type="button" class="pill-btn" data-value="W">W</button>
+              <button type="button" class="pill-btn" data-value="NW">NW</button>
+            </div>
+
+            <label style="margin-top: 10px;">Relative Wind Vector</label>
+            <div class="pill-grid" id="relativeWindGrid">
+              <button type="button" class="pill-btn active" data-value="Headwind">Headwind</button>
+              <button type="button" class="pill-btn" data-value="Crosswind">Crosswind</button>
+              <button type="button" class="pill-btn" data-value="Tailwind">Tailwind</button>
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="form-group">
+            <label for="notes">Notes / Conditions</label>
+            <textarea id="notes" rows="2" placeholder="Smooth line, tight proximity run..."></textarea>
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn">+ Log Flight</button>
+          <button type="button" class="cancel-btn hidden" id="cancelEditBtn">Cancel Editing</button>
+        </form>
+      </div>
     </div>
 
-    <!-- History Header & Log List -->
-    <div class="history-header">
-      <h2 style="font-size: 1.1rem; margin: 0; color: #0f172a;">Flight History</h2>
-      <button class="export-btn" id="exportBtn">Export CSV</button>
+    <!-- TAB 2: FLIGHT LOG HISTORY -->
+    <div id="tab-history" class="tab-content">
+      <div class="history-header">
+        <h2 style="font-size: 1.1rem; margin: 0; color: #0f172a;">Flight History</h2>
+        <button class="export-btn" id="exportBtn">Export CSV</button>
+      </div>
+      <div id="logList"></div>
     </div>
 
-    <div id="logList"></div>
+    <!-- TAB 3: SETTINGS -->
+    <div id="tab-settings" class="tab-content">
+      <div class="settings-card">
+        <h2>Manage Launch Sites</h2>
+        <div id="sitesSettingsList"></div>
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+          <input type="text" id="newSiteName" placeholder="New Launch Site Name">
+          <input type="number" id="newSiteElev" placeholder="Elev (ft)" style="width: 100px;">
+          <button type="button" id="addNewSiteBtn" style="padding: 0 12px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h2>Manage Wings</h2>
+        <div id="wingsSettingsList"></div>
+        <div style="margin-top: 12px; display: flex; gap: 8px;">
+          <input type="text" id="newWingName" placeholder="New Wing (e.g. Mirage 13m)">
+          <button type="button" id="addNewWingBtn" style="padding: 0 12px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
+        </div>
+      </div>
+
+      <div class="settings-card">
+        <h2>Database & Cloud Sync</h2>
+        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Connected to Supabase database for multi-device sync.</p>
+        <button type="button" id="manualSyncBtn" style="width: 100%; padding: 12px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #0f172a; cursor: pointer;">🔄 Force Re-Sync with Cloud</button>
+      </div>
+    </div>
+
   </div>
 
+  <!-- BOTTOM NAVIGATION BAR -->
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-tab="tab-log">
+      <span class="nav-icon">✏️</span>
+      <span>Log Flight</span>
+    </button>
+    <button class="nav-item" data-tab="tab-history">
+      <span class="nav-icon">📋</span>
+      <span>Flight Log</span>
+    </button>
+    <button class="nav-item" data-tab="tab-settings">
+      <span class="nav-icon">⚙️</span>
+      <span>Settings</span>
+    </button>
+  </nav>
+
   <script>
+    // Navigation Tabs Logic
+    const navItems = document.querySelectorAll('.nav-item');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    function switchTab(tabId) {
+      navItems.forEach(item => {
+        if (item.dataset.tab === tabId) {
+          item.classList.add('active');
+        } else {
+          item.classList.remove('active');
+        }
+      });
+      tabContents.forEach(tab => {
+        if (tab.id === tabId) {
+          tab.classList.add('active');
+        } else {
+          tab.classList.remove('active');
+        }
+      });
+      window.scrollTo(0, 0);
+    }
+
+    navItems.forEach(item => {
+      item.addEventListener('click', () => switchTab(item.dataset.tab));
+    });
+
     const flightDateInput = document.getElementById('flightDate');
     const flightTimeInput = document.getElementById('flightTime');
     
@@ -511,14 +645,18 @@
       "Lauterbrunnen - Manlichen North": 5280, "Lauterbrunnen - Manlichen West": 3380
     };
 
-    let storedElevations = JSON.parse(localStorage.getItem('speedfly_site_elevations') || '{}');
-    const siteElevations = Object.assign({}, defaultSiteElevations, storedElevations);
-    localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+    let siteElevations = JSON.parse(localStorage.getItem('speedfly_site_elevations') || 'null');
+    if (!siteElevations) {
+      siteElevations = defaultSiteElevations;
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+    }
+
+    let customWings = JSON.parse(localStorage.getItem('speedfly_wings') || '["Dragonfly 18m", "Dragonfly 16m"]');
 
     let flights = JSON.parse(localStorage.getItem('speedfly_flights') || '[]');
     let editingFlightId = null;
 
-    let selectedWing = 'Dragonfly 18m';
+    let selectedWing = customWings[0] || 'Dragonfly 18m';
     let selectedLaunchType = 'Foot launch';
     let selectedWindDesc = 'Dead';
     let selectedCompass = 'N';
@@ -534,14 +672,23 @@
     const relativeWindGrid = document.getElementById('relativeWindGrid');
     const launchSiteSelect = document.getElementById('launchSiteSelect');
     const launchElevation = document.getElementById('launchElevation');
-    const showCustomWingBtn = document.getElementById('showCustomWingBtn');
-    const customWingContainer = document.getElementById('customWingContainer');
-    const customWingInput = document.getElementById('customWingInput');
-    const saveCustomWingBtn = document.getElementById('saveCustomWingBtn');
     const totalFlightsBadge = document.getElementById('totalFlightsBadge');
     const totalVertBadge = document.getElementById('totalVertBadge');
     const logList = document.getElementById('logList');
     const exportBtn = document.getElementById('exportBtn');
+
+    function populateWingsUI() {
+      wingPillGrid.innerHTML = customWings.map((w, idx) => `
+        <button type="button" class="pill-btn ${w === selectedWing ? 'active' : ''}" data-value="${w}">${w}</button>
+      `).join('');
+    }
+
+    function populateSitesDropdown() {
+      launchSiteSelect.innerHTML = Object.keys(siteElevations).map(site => `
+        <option value="${site}">${site}</option>
+      `).join('');
+      updateElevationForSelectedSite();
+    }
 
     function getFlightTimestamp(rawDate, rawTime) {
       if (!rawDate) return Date.now();
@@ -612,56 +759,16 @@
 
     function updateElevationForSelectedSite() {
       const selectedSite = launchSiteSelect.value;
-      if (selectedSite === '__ADD_CUSTOM__') {
-        const customSiteName = prompt("Enter new launch site name:");
-        if (customSiteName) {
-          const customElev = prompt(`Enter elevation for ${customSiteName} (ft):`, "1000");
-          siteElevations[customSiteName] = parseInt(customElev) || 0;
-          localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
-
-          const newOpt = document.createElement('option');
-          newOpt.value = customSiteName;
-          newOpt.textContent = customSiteName;
-          launchSiteSelect.insertBefore(newOpt, launchSiteSelect.lastElementChild);
-          launchSiteSelect.value = customSiteName;
-          launchElevation.value = siteElevations[customSiteName];
-        } else {
-          launchSiteSelect.selectedIndex = 0;
-          updateElevationForSelectedSite();
-        }
-      } else {
-        const elev = siteElevations[selectedSite];
-        launchElevation.value = (elev !== undefined) ? elev : '';
-      }
+      const elev = siteElevations[selectedSite];
+      launchElevation.value = (elev !== undefined) ? elev : '';
     }
 
     launchSiteSelect.addEventListener('change', updateElevationForSelectedSite);
 
-    function setGridActiveValue(gridElement, value, setter) {
-      let found = false;
-      gridElement.querySelectorAll('.pill-btn').forEach(b => {
-        if (b.dataset.value === value) {
-          b.classList.add('active');
-          found = true;
-        } else {
-          b.classList.remove('active');
-        }
-      });
-      if (!found && gridElement === wingPillGrid && value) {
-        const newBtn = document.createElement('button');
-        newBtn.type = 'button';
-        newBtn.className = 'pill-btn active';
-        newBtn.dataset.value = value;
-        newBtn.textContent = value;
-        wingPillGrid.insertBefore(newBtn, showCustomWingBtn);
-      }
-      setter(value);
-    }
-
     function handlePillClick(gridElement, callback) {
       gridElement.addEventListener('click', (e) => {
         const btn = e.target.closest('.pill-btn');
-        if (!btn || btn.id === 'showCustomWingBtn') return;
+        if (!btn) return;
         gridElement.querySelectorAll('.pill-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
         callback(btn.dataset.value);
@@ -673,19 +780,6 @@
     handlePillClick(windDescGrid, val => selectedWindDesc = val);
     handlePillClick(compassGrid, val => selectedCompass = val);
     handlePillClick(relativeWindGrid, val => selectedRelativeWind = val);
-
-    showCustomWingBtn.addEventListener('click', () => {
-      customWingContainer.classList.toggle('hidden');
-      if (!customWingContainer.classList.contains('hidden')) customWingInput.focus();
-    });
-
-    saveCustomWingBtn.addEventListener('click', () => {
-      const val = customWingInput.value.trim();
-      if (!val) return;
-      setGridActiveValue(wingPillGrid, val, v => selectedWing = v);
-      customWingInput.value = '';
-      customWingContainer.classList.add('hidden');
-    });
 
     logForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -751,6 +845,7 @@
       reindexFlightNumbers();
       localStorage.setItem('speedfly_flights', JSON.stringify(flights));
       render();
+      switchTab('tab-history'); // Redirect to Flight Log after logging
     });
 
     function editFlight(id) {
@@ -765,19 +860,15 @@
       if (flight.rawDate) flightDateInput.value = flight.rawDate;
       if (flight.rawTime) flightTimeInput.value = flight.rawTime;
 
-      setGridActiveValue(wingPillGrid, flight.wing || 'Dragonfly 18m', v => selectedWing = v);
-      setGridActiveValue(launchTypeGrid, flight.launchType || 'Foot launch', v => selectedLaunchType = v);
-      setGridActiveValue(windDescGrid, flight.windDesc || 'Dead', v => selectedWindDesc = v);
-      setGridActiveValue(compassGrid, flight.compass || 'N', v => selectedCompass = v);
-      setGridActiveValue(relativeWindGrid, flight.relativeWind || 'Headwind', v => selectedRelativeWind = v);
+      selectedWing = flight.wing || customWings[0];
+      populateWingsUI();
 
       launchSiteSelect.value = flight.site;
       launchElevation.value = flight.elevation || 0;
       document.getElementById('windSpeed').value = flight.windSpeed ? parseInt(flight.windSpeed) : '';
       document.getElementById('notes').value = flight.notes || '';
 
-      document.getElementById('formCard').scrollIntoView({ behavior: 'smooth' });
-      render();
+      switchTab('tab-log');
     }
 
     function resetForm() {
@@ -805,6 +896,84 @@
         render();
       }
     }
+
+    // --- SETTINGS TAB MANAGEMENT ---
+    function renderSettings() {
+      // Sites List
+      const sitesList = document.getElementById('sitesSettingsList');
+      sitesList.innerHTML = Object.keys(siteElevations).map(site => `
+        <div class="settings-list-item">
+          <span style="font-weight: 600; font-size: 0.9rem;">${site}</span>
+          <div style="display: flex; gap: 8px; align-items: center;">
+            <input type="number" value="${siteElevations[site]}" onchange="updateSiteElev('${site}', this.value)">
+            <button type="button" class="action-btn delete-btn" onclick="deleteSite('${site}')">✕</button>
+          </div>
+        </div>
+      `).join('');
+
+      // Wings List
+      const wingsList = document.getElementById('wingsSettingsList');
+      wingsList.innerHTML = customWings.map(w => `
+        <div class="settings-list-item">
+          <span style="font-weight: 600; font-size: 0.9rem;">${w}</span>
+          <button type="button" class="action-btn delete-btn" onclick="deleteWing('${w}')">✕</button>
+        </div>
+      `).join('');
+    }
+
+    window.updateSiteElev = function(site, newElev) {
+      siteElevations[site] = parseInt(newElev) || 0;
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+      populateSitesDropdown();
+    };
+
+    window.deleteSite = function(site) {
+      if (confirm(`Remove site "${site}"?`)) {
+        delete siteElevations[site];
+        localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+        populateSitesDropdown();
+        renderSettings();
+      }
+    };
+
+    window.deleteWing = function(wingName) {
+      if (customWings.length <= 1) return alert("You must keep at least one wing model!");
+      if (confirm(`Remove wing "${wingName}"?`)) {
+        customWings = customWings.filter(w => w !== wingName);
+        localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
+        if (selectedWing === wingName) selectedWing = customWings[0];
+        populateWingsUI();
+        renderSettings();
+      }
+    };
+
+    document.getElementById('addNewSiteBtn').addEventListener('click', () => {
+      const name = document.getElementById('newSiteName').value.trim();
+      const elev = parseInt(document.getElementById('newSiteElev').value) || 0;
+      if (!name) return;
+      siteElevations[name] = elev;
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+      document.getElementById('newSiteName').value = '';
+      document.getElementById('newSiteElev').value = '';
+      populateSitesDropdown();
+      renderSettings();
+    });
+
+    document.getElementById('addNewWingBtn').addEventListener('click', () => {
+      const wing = document.getElementById('newWingName').value.trim();
+      if (!wing) return;
+      if (!customWings.includes(wing)) {
+        customWings.push(wing);
+        localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
+        populateWingsUI();
+        renderSettings();
+      }
+      document.getElementById('newWingName').value = '';
+    });
+
+    document.getElementById('manualSyncBtn').addEventListener('click', () => {
+      syncWithCloud();
+    });
 
     exportBtn.addEventListener('click', () => {
       if (flights.length === 0) return alert('No flights logged yet!');
@@ -836,10 +1005,14 @@
       logList.innerHTML = displayFlights.map(f => `
         <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
           <div class="log-main">
-            <div class="log-wing">${f.wing}</div>
-            <div class="log-meta">${f.site} (${f.elevation ? f.elevation + ' ft' : 'N/A'}) • ${f.launchType}</div>
-            <div class="log-meta" style="color: #0f172a; font-weight: 600;">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind}) • ${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
-            ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569;">"${f.notes}"</div>` : ''}
+            <!-- Location Header First -->
+            <div class="log-site-header">${f.site}</div>
+            <div class="log-datetime-subheader">${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
+            
+            <!-- Details Subtext -->
+            <div class="log-meta"><b>${f.wing}</b> • ${f.elevation ? f.elevation + ' ft' : 'N/A'} • ${f.launchType}</div>
+            <div class="log-meta">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind})</div>
+            ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569; margin-top: 2px;">"${f.notes}"</div>` : ''}
           </div>
           <div class="log-right-col">
             <div class="action-row">
@@ -852,7 +1025,9 @@
       `).join('');
     }
 
-    updateElevationForSelectedSite();
+    populateWingsUI();
+    populateSitesDropdown();
+    renderSettings();
     reindexFlightNumbers();
     render();
     window.addEventListener('online', syncWithCloud);
