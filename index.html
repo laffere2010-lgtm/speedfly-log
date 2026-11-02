@@ -9,6 +9,7 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Speedfly Log">
   
+  <link rel="apple-touch-icon" href="IMG_7689_3.jpg">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -19,40 +20,16 @@
     }
 
     body {
-      color: #ffffff;
+      background-color: #f8f9fa;
+      color: #111827;
       margin: 0;
-      padding: 0;
+      padding: 16px;
       padding-bottom: 90px;
-      position: relative;
-      min-height: 100vh;
-      overflow-x: hidden;
-      background-color: #0a1428;
-    }
-
-    /* FULLPAGE BACKGROUND IMAGE */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: url('https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80');
-      background-size: cover;
-      background-position: center bottom;
-      z-index: -2;
-    }
-
-    /* SEMI-TRANSPARENT DARK OVERLAY FOR READABILITY */
-    body::after {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(10, 20, 40, 0.65);
-      z-index: -1;
     }
 
     .container {
       max-width: 500px;
       margin: 0 auto;
-      padding: 16px;
     }
 
     header {
@@ -60,11 +37,11 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      background: rgba(10, 20, 40, 0.75);
+      background: #ffffff;
       padding: 14px 16px;
       border-radius: 12px;
-      border: 1px solid rgba(135, 206, 235, 0.35);
-      backdrop-filter: blur(8px);
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
     }
 
     .header-title-container {
@@ -82,7 +59,7 @@
       font-size: 1.2rem;
       margin: 0;
       font-weight: 800;
-      color: #87ceeb;
+      color: #0f172a;
     }
 
     .header-badges {
@@ -93,19 +70,19 @@
     }
 
     .stat-badge {
-      background: rgba(135, 206, 235, 0.15);
-      color: #ffffff;
+      background: #f1f5f9;
+      color: #0f172a;
       padding: 3px 8px;
       border-radius: 20px;
       font-weight: 700;
       font-size: 0.75rem;
-      border: 1px solid rgba(135, 206, 235, 0.4);
+      border: 1px solid #cbd5e1;
     }
 
     .sync-status {
       font-size: 0.7rem;
       font-weight: 600;
-      color: #87ceeb;
+      color: #059669;
     }
 
     .tab-content {
@@ -116,47 +93,58 @@
       display: block;
     }
 
-    .card, .settings-card {
-      background: rgba(10, 20, 40, 0.75);
+    .card {
+      background-color: #0f172a;
+      background-image: linear-gradient(rgba(15, 23, 42, 0.40), rgba(15, 23, 42, 0.50)), url('IMG_7689_3.jpg');
+      background-size: cover;
+      background-position: center top;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 20px;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+      color: #ffffff;
+    }
+
+    .settings-card {
+      background: #ffffff;
       border-radius: 16px;
       padding: 16px;
-      border: 1px solid rgba(135, 206, 235, 0.4);
+      border: 1px solid #e5e7eb;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
       margin-bottom: 16px;
-      backdrop-filter: blur(8px);
     }
 
     .settings-card h2 {
       margin-top: 0;
       font-size: 1.05rem;
-      color: #87ceeb;
-      border-bottom: 1px solid rgba(135, 206, 235, 0.2);
+      color: #0f172a;
+      border-bottom: 1px solid #f1f5f9;
       padding-bottom: 8px;
     }
 
     .form-group {
-      margin-bottom: 16px;
+      margin-bottom: 18px;
     }
 
-    /* FIXED DATE / TIME ROW ALIGNMENT */
     .date-time-row {
       display: flex;
-      gap: 12px;
-      width: 100%;
+      gap: 10px;
     }
 
     .date-time-row > div {
       flex: 1;
-      min-width: 0; /* Prevents input overflow/overlap */
     }
 
     label {
       display: block;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #4ade80; /* Bright readable green */
-      margin-bottom: 6px;
+      color: #ffffff;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+      margin-bottom: 8px;
     }
 
     .pill-grid {
@@ -167,15 +155,16 @@
 
     .pill-btn {
       flex: 1 1 calc(33.33% - 6px);
-      min-height: 40px;
-      background: rgba(10, 20, 40, 0.5);
-      backdrop-filter: blur(2px);
-      border: 1px solid #87ceeb;
-      border-radius: 8px;
-      color: #4ade80;
+      min-height: 44px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(4px);
+      border: 2px solid rgba(255, 255, 255, 0.6);
+      border-radius: 10px;
+      color: #0f172a;
       font-weight: 700;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       cursor: pointer;
+      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -184,73 +173,58 @@
     }
 
     .pill-btn.active {
-      background: #87ceeb;
-      color: #0a1428;
-      border-color: #87ceeb;
+      background: #0f172a;
+      color: #ffffff;
+      border-color: #ffffff;
       font-weight: 800;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     }
 
-    /* STANDARDIZED INPUT FIELDS */
-    input[type="text"], 
-    input[type="number"], 
-    input[type="date"], 
-    input[type="time"], 
-    select, 
-    textarea {
+    input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
       width: 100%;
-      height: 44px;
-      padding: 8px 12px;
-      background: rgba(10, 20, 40, 0.7);
-      border: 1px solid #4ade80;
-      border-radius: 8px;
-      color: #87ceeb;
-      font-size: 0.95rem;
+      padding: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      color: #0f172a;
+      font-size: 1rem;
       font-weight: 600;
       box-sizing: border-box;
-      -webkit-appearance: none;
     }
 
-    textarea {
-      height: auto;
-      padding: 10px 12px;
-    }
-
-    input[type="text"]:focus, 
-    input[type="number"]:focus, 
-    input[type="date"]:focus, 
-    input[type="time"]:focus, 
-    select:focus, 
-    textarea:focus {
+    input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus, select:focus, textarea:focus {
       outline: none;
-      border-color: #87ceeb;
-      background: rgba(10, 20, 40, 0.9);
+      border-color: #0f172a;
+      background: #ffffff;
     }
 
     .submit-btn {
       width: 100%;
-      min-height: 50px;
-      background: #22c55e;
-      color: #0a1428;
-      border: none;
-      border-radius: 10px;
-      font-size: 1.05rem;
+      min-height: 54px;
+      background: #0f172a;
+      color: #ffffff;
+      border: 2px solid #ffffff;
+      border-radius: 12px;
+      font-size: 1.1rem;
       font-weight: 800;
       cursor: pointer;
-      margin-top: 6px;
+      transition: background 0.15s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
     }
 
     .submit-btn.editing {
-      background: #87ceeb;
+      background: #2563eb;
+      border-color: #60a5fa;
     }
 
     .cancel-btn {
       width: 100%;
       min-height: 40px;
-      background: rgba(135, 206, 235, 0.15);
+      background: rgba(255, 255, 255, 0.2);
       color: #ffffff;
-      border: 1px solid rgba(135, 206, 235, 0.4);
-      border-radius: 8px;
-      font-size: 0.85rem;
+      border: 1px solid rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+      font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
       margin-top: 8px;
@@ -264,9 +238,9 @@
     }
 
     .export-btn {
-      background: rgba(135, 206, 235, 0.15);
-      border: 1px solid rgba(135, 206, 235, 0.4);
-      color: #ffffff;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
       padding: 6px 12px;
       border-radius: 8px;
       font-size: 0.85rem;
@@ -274,36 +248,158 @@
       cursor: pointer;
     }
 
+    /* CALENDAR WIDGET */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .calendar-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #0f172a;
+    }
+
+    .calendar-nav-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .cal-day-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #64748b;
+      padding-bottom: 4px;
+    }
+
+    .cal-cell {
+      padding: 6px 0;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: #64748b;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cal-cell.empty {
+      background: transparent;
+      cursor: default;
+    }
+
+    .cal-cell.has-flight {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .cal-cell.selected-date {
+      outline: 2px solid #2563eb;
+      outline-offset: -2px;
+    }
+
+    /* HISTOGRAM WIDGET */
+    .histogram-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 100px;
+      padding-top: 10px;
+    }
+
+    .histo-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .histo-bar {
+      width: 100%;
+      background: #0f172a;
+      border-radius: 4px 4px 0 0;
+      min-height: 2px;
+      transition: height 0.3s ease;
+    }
+
+    .histo-count {
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: #0f172a;
+    }
+
+    .histo-label {
+      font-size: 0.65rem;
+      color: #64748b;
+      margin-top: 4px;
+      white-space: nowrap;
+    }
+
     .log-item {
-      background: rgba(10, 20, 40, 0.75);
-      border: 1px solid rgba(135, 206, 235, 0.4);
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
       border-radius: 10px;
       padding: 14px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+      position: relative;
+    }
+
+    .log-item.editing-active {
+      border: 2px solid #2563eb;
+      background: #eff6ff;
+    }
+
+    .log-main {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding-right: 12px;
+      flex: 1;
     }
 
     .log-site-header {
       font-weight: 800;
-      color: #ffffff;
+      color: #0f172a;
       font-size: 1.05rem;
     }
 
     .log-datetime-subheader {
       font-size: 0.82rem;
       font-weight: 700;
-      color: #87ceeb;
+      color: #2563eb;
       margin-bottom: 2px;
     }
 
     .log-meta {
       font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.75);
+      color: #475569;
     }
 
-    .log-meta b { color: #87ceeb; }
+    .log-right-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px;
+    }
 
     .action-row {
       display: flex;
@@ -311,9 +407,9 @@
     }
 
     .action-btn {
-      background: rgba(135, 206, 235, 0.1);
-      border: 1px solid rgba(135, 206, 235, 0.3);
-      color: #ffffff;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #64748b;
       width: 28px;
       height: 28px;
       border-radius: 50%;
@@ -321,25 +417,42 @@
       align-items: center;
       justify-content: center;
       font-size: 0.8rem;
+      font-weight: 700;
       cursor: pointer;
+      transition: all 0.15s ease;
+      padding: 0;
+    }
+
+    .edit-btn:hover, .edit-btn:active {
+      background: #2563eb;
+      color: #ffffff;
+      border-color: #1d4ed8;
+    }
+
+    .delete-btn:hover, .delete-btn:active {
+      background: #ef4444;
+      color: #ffffff;
+      border-color: #dc2626;
     }
 
     .log-num {
       font-weight: 800;
       font-size: 1.1rem;
-      color: #ffffff;
+      color: #0f172a;
     }
 
     .bottom-nav {
       position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(10, 20, 40, 0.9);
-      border-top: 1px solid rgba(135, 206, 235, 0.4);
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #ffffff;
+      border-top: 1px solid #e5e7eb;
       display: flex;
       justify-content: space-around;
       padding: 8px 0;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
       z-index: 1000;
-      backdrop-filter: blur(10px);
     }
 
     .nav-item {
@@ -348,24 +461,56 @@
       align-items: center;
       background: none;
       border: none;
-      color: rgba(135, 206, 235, 0.6);
+      color: #64748b;
       font-size: 0.75rem;
       font-weight: 700;
+      gap: 4px;
       cursor: pointer;
       width: 33.33%;
     }
 
     .nav-item.active {
-      color: #87ceeb;
+      color: #0f172a;
+    }
+
+    .nav-icon {
+      font-size: 1.25rem;
+    }
+
+    .settings-list-item {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .settings-list-item input[type="text"] {
+      padding: 8px;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .settings-list-item input[type="number"] {
+      width: 80px;
+      padding: 8px;
+      font-size: 0.9rem;
     }
 
     .filter-row {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       margin-bottom: 12px;
     }
 
-    .hidden { display: none !important; }
+    .filter-row select {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -373,10 +518,10 @@
   <div class="container">
     <header>
       <div class="header-title-container">
-        <svg class="app-icon-svg" viewBox="0 0 100 100" fill="#87ceeb" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 40 Q 50 10 90 40 Q 50 25 10 40 Z" fill="#87ceeb"/>
-          <path d="M20 40 L50 75 L80 40" stroke="#87ceeb" stroke-width="3" fill="none"/>
-          <circle cx="50" cy="78" r="4" fill="#87ceeb"/>
+        <svg class="app-icon-svg" viewBox="0 0 100 100" fill="#0f172a" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 40 Q 50 10 90 40 Q 50 25 10 40 Z" fill="#0f172a"/>
+          <path d="M20 40 L50 75 L80 40" stroke="#0f172a" stroke-width="3" fill="none"/>
+          <circle cx="50" cy="78" r="4" fill="#0f172a"/>
         </svg>
         <div>
           <h1>Speedfly Log</h1>
@@ -391,7 +536,7 @@
 
     <!-- TAB 1: LOG FLIGHT FORM -->
     <div id="tab-log" class="tab-content active">
-      <div class="card">
+      <div class="card" id="formCard">
         <form id="logForm">
           <div class="form-group">
             <div class="date-time-row">
@@ -473,19 +618,41 @@
       </div>
     </div>
 
-    <!-- TAB 2: FLIGHT LOG HISTORY -->
+    <!-- TAB 2: FLIGHT LOG HISTORY WITH GRAPHICS & FILTERS -->
     <div id="tab-history" class="tab-content">
-      <div class="card">
-        <div class="history-header">
-          <h2 style="font-size: 1.1rem; margin: 0; color: #87ceeb;">Flight History</h2>
-          <button class="export-btn" id="exportBtn">Export CSV</button>
+      <!-- CALENDAR WIDGET CARD -->
+      <div class="settings-card">
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" id="calPrevBtn">&lt;</button>
+          <div class="calendar-title" id="calTitle">Month Year</div>
+          <button class="calendar-nav-btn" id="calNextBtn">&gt;</button>
         </div>
-        <div class="filter-row">
-          <select id="filterWingSelect"><option value="">All Wings</option></select>
-          <select id="filterSiteSelect"><option value="">All Sites</option></select>
+        <div class="calendar-grid">
+          <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div>
+          <div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div>
+          <div class="cal-day-label">S</div>
         </div>
-        <div id="logList"></div>
+        <div class="calendar-grid" id="calendarDaysGrid"></div>
       </div>
+
+      <!-- HISTOGRAM WIDGET CARD -->
+      <div class="settings-card">
+        <h2>Elevation Distribution</h2>
+        <div class="histogram-container" id="histogramContainer"></div>
+      </div>
+
+      <!-- FILTERS & HEADER -->
+      <div class="history-header">
+        <h2 style="font-size: 1.1rem; margin: 0; color: #0f172a;">Flight History</h2>
+        <button class="export-btn" id="exportBtn">Export CSV</button>
+      </div>
+
+      <div class="filter-row">
+        <select id="filterWingSelect"><option value="">All Wings</option></select>
+        <select id="filterSiteSelect"><option value="">All Sites</option></select>
+      </div>
+
+      <div id="logList"></div>
     </div>
 
     <!-- TAB 3: SETTINGS -->
@@ -496,7 +663,7 @@
         <div style="margin-top: 12px; display: flex; gap: 8px;">
           <input type="text" id="newSiteName" placeholder="New Launch Site Name">
           <input type="number" id="newSiteElev" placeholder="Elev (ft)" style="width: 100px;">
-          <button type="button" id="addNewSiteBtn" style="padding: 0 12px; background: #22c55e; color: #0a1428; border: none; border-radius: 8px; font-weight: 700;">Add</button>
+          <button type="button" id="addNewSiteBtn" style="padding: 0 12px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
         </div>
       </div>
 
@@ -504,15 +671,15 @@
         <h2>Manage Wings</h2>
         <div id="wingsSettingsList"></div>
         <div style="margin-top: 12px; display: flex; gap: 8px;">
-          <input type="text" id="newWingName" placeholder="New Wing (e.g. Dragonfly 16m)">
-          <button type="button" id="addNewWingBtn" style="padding: 0 12px; background: #22c55e; color: #0a1428; border: none; border-radius: 8px; font-weight: 700;">Add</button>
+          <input type="text" id="newWingName" placeholder="New Wing (e.g. Mirage 13m)">
+          <button type="button" id="addNewWingBtn" style="padding: 0 12px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
         </div>
       </div>
 
       <div class="settings-card">
         <h2>Database & Cloud Sync</h2>
-        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 12px;">Connected to Supabase database for multi-device sync.</p>
-        <button type="button" id="manualSyncBtn" style="width: 100%; padding: 12px; background: rgba(135,206,235,0.15); border: 1px solid rgba(135,206,235,0.4); border-radius: 8px; font-weight: 700; color: #ffffff; cursor: pointer;">🔄 Force Re-Sync with Cloud</button>
+        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Connected to Supabase database for multi-device sync.</p>
+        <button type="button" id="manualSyncBtn" style="width: 100%; padding: 12px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #0f172a; cursor: pointer;">🔄 Force Re-Sync with Cloud</button>
       </div>
     </div>
 
@@ -520,15 +687,15 @@
 
   <nav class="bottom-nav">
     <button class="nav-item active" data-tab="tab-log">
-      <span style="font-size: 1.25rem; margin-bottom: 2px;">✏️</span>
+      <span class="nav-icon">✏️</span>
       <span>Log Flight</span>
     </button>
     <button class="nav-item" data-tab="tab-history">
-      <span style="font-size: 1.25rem; margin-bottom: 2px;">📋</span>
+      <span class="nav-icon">📋</span>
       <span>Flight Log</span>
     </button>
     <button class="nav-item" data-tab="tab-settings">
-      <span style="font-size: 1.25rem; margin-bottom: 2px;">⚙️</span>
+      <span class="nav-icon">⚙️</span>
       <span>Settings</span>
     </button>
   </nav>
@@ -567,7 +734,7 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkenRldm94YmdmdGFpZnd6YnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNDMxNjksImV4cCI6MjEwODgxOTE2OX0.vv4_h1HxtUW9IqnB5ogi9GisZO2bOPArqWcLDne_Its';
     
     let supabaseClient = null;
-    if (window.supabase) {
+    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && window.supabase) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
@@ -576,7 +743,11 @@
     const defaultSiteElevations = {
       "Bingen-South": 1600, "Bingen-East": 2110, "Syncline": 900, "Kiwanda": 100,
       "Mt Hood - Cooper Spur": 300, "Mt Hood - Palmer": 1900, "Rowena": 1800,
-      "Dougs Beach": 1600, "Tiger": 1600, "Chelan-Dos": 1500, "Chelan-Tres": 2000
+      "Dougs Beach": 1600, "Tiger": 1600, "Chelan-Dos": 1500, "Chelan-Tres": 2000,
+      "Chelan-Shitshow": 1100, "Chelan-FYIG": 1100, "Chelan-Pirates": 900,
+      "Chelan- Deer Mountain": 2500, "Chelan- Airport ridge": 500, "Raptor Ride": 1900,
+      "Winchester Mountain": 1000, "Maury Island": 360, "Lauterbrunnen - Murren": 2700,
+      "Lauterbrunnen - Manlichen North": 5280, "Lauterbrunnen - Manlichen West": 3380
     };
 
     let siteElevations = JSON.parse(localStorage.getItem('speedfly_site_elevations') || 'null');
@@ -594,6 +765,9 @@
     let selectedWindDesc = 'Dead';
     let selectedCompass = 'N';
     let selectedRelativeWind = 'Headwind';
+
+    let calCurrentDate = new Date();
+    let selectedCalFilterDate = null;
 
     const logForm = document.getElementById('logForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -619,17 +793,62 @@
     }
 
     function populateSitesDropdown() {
-      const siteOptions = Object.keys(siteElevations).map(site => `
+      launchSiteSelect.innerHTML = Object.keys(siteElevations).map(site => `
         <option value="${site}">${site}</option>
       `).join('');
-      launchSiteSelect.innerHTML = siteOptions;
-      filterSiteSelect.innerHTML = '<option value="">All Sites</option>' + siteOptions;
       updateElevationForSelectedSite();
     }
 
-    function populateFilterWings() {
+    function populateFilterDropdowns() {
       filterWingSelect.innerHTML = '<option value="">All Wings</option>' + 
         customWings.map(w => `<option value="${w}">${w}</option>`).join('');
+
+      filterSiteSelect.innerHTML = '<option value="">All Sites</option>' + 
+        Object.keys(siteElevations).map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
+    function getFlightTimestamp(rawDate, rawTime) {
+      if (!rawDate) return Date.now();
+      const timeStr = rawTime || '12:00';
+      return new Date(`${rawDate}T${timeStr}:00`).getTime() || Date.now();
+    }
+
+    function reindexFlightNumbers() {
+      flights.sort((a, b) => getFlightTimestamp(a.rawDate, a.rawTime) - getFlightTimestamp(b.rawDate, b.rawTime));
+      flights.forEach((f, idx) => { f.flightNum = idx + 1; });
+    }
+
+    async function syncWithCloud() {
+      if (!supabaseClient) {
+        syncStatus.textContent = "⚡ Offline Mode";
+        return;
+      }
+      try {
+        if (!navigator.onLine) return syncStatus.textContent = "⚡ Offline";
+        syncStatus.textContent = "🔄 Syncing...";
+        const { data, error } = await supabaseClient.from('flights').select('*');
+        if (!error && data) {
+          const merged = [...flights];
+          data.forEach(rf => { if (!merged.some(f => f.id === rf.id)) merged.push(rf); });
+          flights = merged;
+          reindexFlightNumbers();
+          localStorage.setItem('speedfly_flights', JSON.stringify(flights));
+          render();
+        }
+        syncStatus.textContent = "🟢 Synced with Cloud";
+      } catch (err) {
+        syncStatus.textContent = "⚡ Offline / Sync Error";
+      }
+    }
+
+    async function pushFlightToCloud(flight) {
+      if (!supabaseClient || !navigator.onLine) return;
+      try { await supabaseClient.from('flights').upsert([flight]); } catch (e) {}
+    }
+
+    async function deleteFlightFromCloud(id) {
+      if (!supabaseClient || !navigator.onLine) return;
+      try { await supabaseClient.from('flights').delete().eq('id', id); } catch (e) {}
     }
 
     function updateElevationForSelectedSite() {
@@ -671,18 +890,265 @@
         }
       }
 
-      const newFlight = {
-        id: Date.now(), flightNum: flights.length + 1, date: formattedDate, rawDate: rawDateVal, rawTime: rawTimeVal,
-        wing: selectedWing, site: launchSiteSelect.value, elevation: elevVal,
-        launchType: selectedLaunchType, windSpeed: wSpeed ? `${wSpeed} kt` : '',
-        windDesc: selectedWindDesc, compass: selectedCompass, relativeWind: selectedRelativeWind,
-        notes: document.getElementById('notes').value.trim()
-      };
-      
-      flights.push(newFlight);
+      if (editingFlightId) {
+        const idx = flights.findIndex(f => f.id === editingFlightId);
+        if (idx !== -1) {
+          flights[idx] = {
+            ...flights[idx],
+            date: formattedDate, rawDate: rawDateVal, rawTime: rawTimeVal,
+            wing: selectedWing, site: launchSiteSelect.value, elevation: elevVal,
+            launchType: selectedLaunchType,
+            windSpeed: wSpeed ? (wSpeed.includes('kt') ? wSpeed : `${wSpeed} kt`) : '',
+            windDesc: selectedWindDesc, compass: selectedCompass, relativeWind: selectedRelativeWind,
+            notes: document.getElementById('notes').value.trim()
+          };
+          pushFlightToCloud(flights[idx]);
+        }
+        resetForm();
+      } else {
+        const newFlight = {
+          id: Date.now(), flightNum: 0, date: formattedDate, rawDate: rawDateVal, rawTime: rawTimeVal,
+          wing: selectedWing, site: launchSiteSelect.value, elevation: elevVal,
+          launchType: selectedLaunchType, windSpeed: wSpeed ? `${wSpeed} kt` : '',
+          windDesc: selectedWindDesc, compass: selectedCompass, relativeWind: selectedRelativeWind,
+          notes: document.getElementById('notes').value.trim()
+        };
+        flights.push(newFlight);
+        pushFlightToCloud(newFlight);
+        resetForm();
+      }
+
+      reindexFlightNumbers();
       localStorage.setItem('speedfly_flights', JSON.stringify(flights));
       render();
       switchTab('tab-history');
+    });
+
+    function editFlight(id) {
+      const flight = flights.find(f => f.id === id);
+      if (!flight) return;
+
+      editingFlightId = id;
+      submitBtn.textContent = '💾 Save Changes';
+      submitBtn.classList.add('editing');
+      cancelEditBtn.classList.remove('hidden');
+
+      if (flight.rawDate) flightDateInput.value = flight.rawDate;
+      if (flight.rawTime) flightTimeInput.value = flight.rawTime;
+
+      selectedWing = flight.wing || customWings[0];
+      populateWingsUI();
+
+      launchSiteSelect.value = flight.site;
+      launchElevation.value = flight.elevation || 0;
+      document.getElementById('windSpeed').value = flight.windSpeed ? parseInt(flight.windSpeed) : '';
+      document.getElementById('notes').value = flight.notes || '';
+
+      switchTab('tab-log');
+    }
+
+    function resetForm() {
+      editingFlightId = null;
+      submitBtn.textContent = '+ Log Flight';
+      submitBtn.classList.remove('editing');
+      cancelEditBtn.classList.add('hidden');
+      setDefaultDateTime();
+      document.getElementById('notes').value = '';
+      document.getElementById('windSpeed').value = '';
+    }
+
+    cancelEditBtn.addEventListener('click', resetForm);
+
+    function deleteFlight(id, flightNum) {
+      if (confirm(`Delete Flight #${flightNum}?`)) {
+        if (editingFlightId === id) resetForm();
+        flights = flights.filter(f => f.id !== id);
+        reindexFlightNumbers();
+        localStorage.setItem('speedfly_flights', JSON.stringify(flights));
+        deleteFlightFromCloud(id);
+        render();
+      }
+    }
+
+    function renderSettings() {
+      const sitesList = document.getElementById('sitesSettingsList');
+      sitesList.innerHTML = Object.keys(siteElevations).map(site => `
+        <div class="settings-list-item">
+          <input type="text" value="${site}" onchange="updateSiteName('${site}', this.value)">
+          <input type="number" value="${siteElevations[site]}" onchange="updateSiteElev('${site}', this.value)" placeholder="ft">
+          <button type="button" class="action-btn delete-btn" onclick="deleteSite('${site}')">✕</button>
+        </div>
+      `).join('');
+
+      const wingsList = document.getElementById('wingsSettingsList');
+      wingsList.innerHTML = customWings.map(w => `
+        <div class="settings-list-item">
+          <span style="font-weight: 600; font-size: 0.9rem; flex: 1;">${w}</span>
+          <button type="button" class="action-btn delete-btn" onclick="deleteWing('${w}')">✕</button>
+        </div>
+      `).join('');
+    }
+
+    window.updateSiteName = function(oldName, newName) {
+      const trimmedNew = newName.trim();
+      if (!trimmedNew || oldName === trimmedNew) return;
+      const currentElev = siteElevations[oldName];
+      delete siteElevations[oldName];
+      siteElevations[trimmedNew] = currentElev;
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+      populateSitesDropdown();
+      populateFilterDropdowns();
+      renderSettings();
+    };
+
+    window.updateSiteElev = function(site, newElev) {
+      siteElevations[site] = parseInt(newElev) || 0;
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+      populateSitesDropdown();
+    };
+
+    window.deleteSite = function(site) {
+      if (confirm(`Remove site "${site}"?`)) {
+        delete siteElevations[site];
+        localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+        populateSitesDropdown();
+        populateFilterDropdowns();
+        renderSettings();
+      }
+    };
+
+    window.deleteWing = function(wingName) {
+      if (customWings.length <= 1) return alert("Must keep at least one wing!");
+      if (confirm(`Remove wing "${wingName}"?`)) {
+        customWings = customWings.filter(w => w !== wingName);
+        localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
+        if (selectedWing === wingName) selectedWing = customWings[0];
+        populateWingsUI();
+        populateFilterDropdowns();
+        renderSettings();
+      }
+    };
+
+    document.getElementById('addNewSiteBtn').addEventListener('click', () => {
+      const name = document.getElementById('newSiteName').value.trim();
+      const elev = parseInt(document.getElementById('newSiteElev').value) || 0;
+      if (!name) return;
+      siteElevations[name] = elev;
+      localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
+      document.getElementById('newSiteName').value = '';
+      document.getElementById('newSiteElev').value = '';
+      populateSitesDropdown();
+      populateFilterDropdowns();
+      renderSettings();
+    });
+
+    document.getElementById('addNewWingBtn').addEventListener('click', () => {
+      const wing = document.getElementById('newWingName').value.trim();
+      if (!wing) return;
+      if (!customWings.includes(wing)) {
+        customWings.push(wing);
+        localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
+        populateWingsUI();
+        populateFilterDropdowns();
+        renderSettings();
+      }
+      document.getElementById('newWingName').value = '';
+    });
+
+    document.getElementById('manualSyncBtn').addEventListener('click', syncWithCloud);
+
+    // CALENDAR LOGIC
+    function renderCalendar() {
+      const year = calCurrentDate.getFullYear();
+      const month = calCurrentDate.getMonth();
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      
+      document.getElementById('calTitle').textContent = `${monthNames[month]} ${year}`;
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const flightDatesSet = new Set(flights.map(f => f.rawDate).filter(Boolean));
+
+      let gridHtml = '';
+      for (let i = 0; i < firstDay; i++) {
+        gridHtml += `<div class="cal-cell empty"></div>`;
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const hasFlight = flightDatesSet.has(dateStr);
+        const isSelected = selectedCalFilterDate === dateStr;
+
+        gridHtml += `
+          <div class="cal-cell ${hasFlight ? 'has-flight' : ''} ${isSelected ? 'selected-date' : ''}" 
+               onclick="toggleCalendarDateFilter('${dateStr}')">
+            ${d}
+          </div>
+        `;
+      }
+      document.getElementById('calendarDaysGrid').innerHTML = gridHtml;
+    }
+
+    window.toggleCalendarDateFilter = function(dateStr) {
+      selectedCalFilterDate = (selectedCalFilterDate === dateStr) ? null : dateStr;
+      renderCalendar();
+      render();
+    };
+
+    document.getElementById('calPrevBtn').addEventListener('click', () => {
+      calCurrentDate.setMonth(calCurrentDate.getMonth() - 1);
+      renderCalendar();
+    });
+
+    document.getElementById('calNextBtn').addEventListener('click', () => {
+      calCurrentDate.setMonth(calCurrentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // HISTOGRAM LOGIC
+    function renderHistogram() {
+      const bins = [
+        { label: '<500ft', min: 0, max: 499, count: 0 },
+        { label: '500-1k', min: 500, max: 999, count: 0 },
+        { label: '1k-1.8k', min: 1000, max: 1799, count: 0 },
+        { label: '1.8k-3k', min: 1800, max: 2999, count: 0 },
+        { label: '3k+ ft', min: 3000, max: 99999, count: 0 }
+      ];
+
+      flights.forEach(f => {
+        const elev = f.elevation || 0;
+        const bin = bins.find(b => elev >= b.min && elev <= b.max);
+        if (bin) bin.count++;
+      });
+
+      const maxCount = Math.max(...bins.map(b => b.count), 1);
+      const histoContainer = document.getElementById('histogramContainer');
+
+      histoContainer.innerHTML = bins.map(b => {
+        const heightPct = (b.count / maxCount) * 80;
+        return `
+          <div class="histo-bar-wrap">
+            <div class="histo-count">${b.count > 0 ? b.count : ''}</div>
+            <div class="histo-bar" style="height: ${Math.max(heightPct, 4)}%;"></div>
+            <div class="histo-label">${b.label}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    filterWingSelect.addEventListener('change', render);
+    filterSiteSelect.addEventListener('change', render);
+
+    exportBtn.addEventListener('click', () => {
+      if (flights.length === 0) return alert('No flights logged yet!');
+      let csv = 'Flight #,Date,Time,Wing,Launch Site,Elevation (ft),Launch Type,Wind Speed,Wind Quality,Compass Dir,Relative Wind,Notes\n';
+      [...flights].reverse().forEach(f => {
+        csv += `"${f.flightNum}","${f.date}","${f.rawTime || ''}","${f.wing}","${f.site}","${f.elevation || 0}","${f.launchType}","${f.windSpeed || ''}","${f.windDesc || ''}","${f.compass || ''}","${f.relativeWind || ''}","${f.notes}"\n`;
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = window.URL.createObjectURL(blob);
+      a.download = `speedfly_logbook_${new Date().toISOString().slice(0,10)}.csv`;
+      a.click();
     });
 
     function render() {
@@ -690,31 +1156,51 @@
       const totalVert = flights.reduce((sum, f) => sum + (f.elevation || 0), 0);
       totalVertBadge.textContent = `${totalVert.toLocaleString()} ft Vert`;
 
+      renderCalendar();
+      renderHistogram();
+
       let filteredFlights = [...flights];
+
       const wingFilter = filterWingSelect.value;
       const siteFilter = filterSiteSelect.value;
 
       if (wingFilter) filteredFlights = filteredFlights.filter(f => f.wing === wingFilter);
       if (siteFilter) filteredFlights = filteredFlights.filter(f => f.site === siteFilter);
+      if (selectedCalFilterDate) filteredFlights = filteredFlights.filter(f => f.rawDate === selectedCalFilterDate);
+
+      if (filteredFlights.length === 0) {
+        logList.innerHTML = `<p style="text-align: center; color: #94a3b8; margin-top: 20px;">No matching flights found.</p>`;
+        return;
+      }
 
       logList.innerHTML = filteredFlights.reverse().map(f => `
-        <div class="log-item">
-          <div>
+        <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
+          <div class="log-main">
             <div class="log-site-header">${f.site}</div>
             <div class="log-datetime-subheader">${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
             <div class="log-meta"><b>${f.wing}</b> • ${f.elevation ? f.elevation + ' ft' : 'N/A'} • ${f.launchType}</div>
             <div class="log-meta">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind})</div>
-            ${f.notes ? `<div class="log-meta" style="font-style: italic; margin-top: 2px;">"${f.notes}"</div>` : ''}
+            ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569; margin-top: 2px;">"${f.notes}"</div>` : ''}
           </div>
-          <div class="log-num">#${f.flightNum}</div>
+          <div class="log-right-col">
+            <div class="action-row">
+              <button type="button" class="action-btn edit-btn" onclick="editFlight(${f.id})" title="Edit entry">✏️</button>
+              <button type="button" class="action-btn delete-btn" onclick="deleteFlight(${f.id}, ${f.flightNum})" title="Delete entry">✕</button>
+            </div>
+            <div class="log-num">#${f.flightNum}</div>
+          </div>
         </div>
       `).join('');
     }
 
     populateWingsUI();
     populateSitesDropdown();
-    populateFilterWings();
+    populateFilterDropdowns();
+    renderSettings();
+    reindexFlightNumbers();
     render();
+    window.addEventListener('online', syncWithCloud);
+    syncWithCloud();
   </script>
 </body>
 </html>
