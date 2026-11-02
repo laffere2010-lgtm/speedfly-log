@@ -5,14 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Speedfly Logbook</title>
   
-  <!-- PWA Standalone Meta Tags for iOS -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Speedfly Log">
   
   <link rel="apple-touch-icon" href="IMG_7689_3.jpg">
-
-  <!-- Supabase JS Client for Cloud Sync -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
@@ -112,7 +109,7 @@
     .settings-card {
       background: #ffffff;
       border-radius: 16px;
-      padding: 20px;
+      padding: 16px;
       border: 1px solid #e5e7eb;
       box-shadow: 0 1px 4px rgba(0,0,0,0.05);
       margin-bottom: 16px;
@@ -120,7 +117,7 @@
 
     .settings-card h2 {
       margin-top: 0;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       color: #0f172a;
       border-bottom: 1px solid #f1f5f9;
       padding-bottom: 8px;
@@ -249,6 +246,109 @@
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
+    }
+
+    /* CALENDAR WIDGET */
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .calendar-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: #0f172a;
+    }
+
+    .calendar-nav-btn {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 2px 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+      text-align: center;
+    }
+
+    .cal-day-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #64748b;
+      padding-bottom: 4px;
+    }
+
+    .cal-cell {
+      padding: 6px 0;
+      font-size: 0.8rem;
+      border-radius: 6px;
+      background: #f8fafc;
+      color: #64748b;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .cal-cell.empty {
+      background: transparent;
+      cursor: default;
+    }
+
+    .cal-cell.has-flight {
+      background: #0f172a;
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .cal-cell.selected-date {
+      outline: 2px solid #2563eb;
+      outline-offset: -2px;
+    }
+
+    /* HISTOGRAM WIDGET */
+    .histogram-container {
+      display: flex;
+      align-items: flex-end;
+      gap: 8px;
+      height: 100px;
+      padding-top: 10px;
+    }
+
+    .histo-bar-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100%;
+      justify-content: flex-end;
+    }
+
+    .histo-bar {
+      width: 100%;
+      background: #0f172a;
+      border-radius: 4px 4px 0 0;
+      min-height: 2px;
+      transition: height 0.3s ease;
+    }
+
+    .histo-count {
+      font-size: 0.7rem;
+      font-weight: 700;
+      margin-bottom: 2px;
+      color: #0f172a;
+    }
+
+    .histo-label {
+      font-size: 0.65rem;
+      color: #64748b;
+      margin-top: 4px;
+      white-space: nowrap;
     }
 
     .log-item {
@@ -397,6 +497,17 @@
       font-size: 0.9rem;
     }
 
+    .filter-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .filter-row select {
+      padding: 8px 12px;
+      font-size: 0.85rem;
+    }
+
     .hidden {
       display: none !important;
     }
@@ -427,7 +538,6 @@
     <div id="tab-log" class="tab-content active">
       <div class="card" id="formCard">
         <form id="logForm">
-          
           <div class="form-group">
             <div class="date-time-row">
               <div>
@@ -508,12 +618,40 @@
       </div>
     </div>
 
-    <!-- TAB 2: FLIGHT LOG HISTORY -->
+    <!-- TAB 2: FLIGHT LOG HISTORY WITH GRAPHICS & FILTERS -->
     <div id="tab-history" class="tab-content">
+      <!-- CALENDAR WIDGET CARD -->
+      <div class="settings-card">
+        <div class="calendar-header">
+          <button class="calendar-nav-btn" id="calPrevBtn">&lt;</button>
+          <div class="calendar-title" id="calTitle">Month Year</div>
+          <button class="calendar-nav-btn" id="calNextBtn">&gt;</button>
+        </div>
+        <div class="calendar-grid">
+          <div class="cal-day-label">S</div><div class="cal-day-label">M</div><div class="cal-day-label">T</div>
+          <div class="cal-day-label">W</div><div class="cal-day-label">T</div><div class="cal-day-label">F</div>
+          <div class="cal-day-label">S</div>
+        </div>
+        <div class="calendar-grid" id="calendarDaysGrid"></div>
+      </div>
+
+      <!-- HISTOGRAM WIDGET CARD -->
+      <div class="settings-card">
+        <h2>Elevation Distribution</h2>
+        <div class="histogram-container" id="histogramContainer"></div>
+      </div>
+
+      <!-- FILTERS & HEADER -->
       <div class="history-header">
         <h2 style="font-size: 1.1rem; margin: 0; color: #0f172a;">Flight History</h2>
         <button class="export-btn" id="exportBtn">Export CSV</button>
       </div>
+
+      <div class="filter-row">
+        <select id="filterWingSelect"><option value="">All Wings</option></select>
+        <select id="filterSiteSelect"><option value="">All Sites</option></select>
+      </div>
+
       <div id="logList"></div>
     </div>
 
@@ -568,25 +706,17 @@
 
     function switchTab(tabId) {
       navItems.forEach(item => {
-        if (item.dataset.tab === tabId) {
-          item.classList.add('active');
-        } else {
-          item.classList.remove('active');
-        }
+        if (item.dataset.tab === tabId) item.classList.add('active');
+        else item.classList.remove('active');
       });
       tabContents.forEach(tab => {
-        if (tab.id === tabId) {
-          tab.classList.add('active');
-        } else {
-          tab.classList.remove('active');
-        }
+        if (tab.id === tabId) tab.classList.add('active');
+        else tab.classList.remove('active');
       });
       window.scrollTo(0, 0);
     }
 
-    navItems.forEach(item => {
-      item.addEventListener('click', () => switchTab(item.dataset.tab));
-    });
+    navItems.forEach(item => item.addEventListener('click', () => switchTab(item.dataset.tab)));
 
     const flightDateInput = document.getElementById('flightDate');
     const flightTimeInput = document.getElementById('flightTime');
@@ -627,7 +757,6 @@
     }
 
     let customWings = JSON.parse(localStorage.getItem('speedfly_wings') || '["Dragonfly 18m", "Dragonfly 16m"]');
-
     let flights = JSON.parse(localStorage.getItem('speedfly_flights') || '[]');
     let editingFlightId = null;
 
@@ -636,6 +765,9 @@
     let selectedWindDesc = 'Dead';
     let selectedCompass = 'N';
     let selectedRelativeWind = 'Headwind';
+
+    let calCurrentDate = new Date();
+    let selectedCalFilterDate = null;
 
     const logForm = document.getElementById('logForm');
     const submitBtn = document.getElementById('submitBtn');
@@ -651,9 +783,11 @@
     const totalVertBadge = document.getElementById('totalVertBadge');
     const logList = document.getElementById('logList');
     const exportBtn = document.getElementById('exportBtn');
+    const filterWingSelect = document.getElementById('filterWingSelect');
+    const filterSiteSelect = document.getElementById('filterSiteSelect');
 
     function populateWingsUI() {
-      wingPillGrid.innerHTML = customWings.map((w, idx) => `
+      wingPillGrid.innerHTML = customWings.map(w => `
         <button type="button" class="pill-btn ${w === selectedWing ? 'active' : ''}" data-value="${w}">${w}</button>
       `).join('');
     }
@@ -665,6 +799,14 @@
       updateElevationForSelectedSite();
     }
 
+    function populateFilterDropdowns() {
+      filterWingSelect.innerHTML = '<option value="">All Wings</option>' + 
+        customWings.map(w => `<option value="${w}">${w}</option>`).join('');
+
+      filterSiteSelect.innerHTML = '<option value="">All Sites</option>' + 
+        Object.keys(siteElevations).map(s => `<option value="${s}">${s}</option>`).join('');
+    }
+
     function getFlightTimestamp(rawDate, rawTime) {
       if (!rawDate) return Date.now();
       const timeStr = rawTime || '12:00';
@@ -672,37 +814,22 @@
     }
 
     function reindexFlightNumbers() {
-      flights.sort((a, b) => {
-        const timeA = getFlightTimestamp(a.rawDate, a.rawTime);
-        const timeB = getFlightTimestamp(b.rawDate, b.rawTime);
-        return timeA - timeB;
-      });
-
-      flights.forEach((f, idx) => {
-        f.flightNum = idx + 1;
-      });
+      flights.sort((a, b) => getFlightTimestamp(a.rawDate, a.rawTime) - getFlightTimestamp(b.rawDate, b.rawTime));
+      flights.forEach((f, idx) => { f.flightNum = idx + 1; });
     }
 
     async function syncWithCloud() {
       if (!supabaseClient) {
-        syncStatus.textContent = "⚡ Offline Mode (Local Only)";
+        syncStatus.textContent = "⚡ Offline Mode";
         return;
       }
       try {
-        if (!navigator.onLine) {
-          syncStatus.textContent = "⚡ Offline (Using Local Data)";
-          return;
-        }
+        if (!navigator.onLine) return syncStatus.textContent = "⚡ Offline";
         syncStatus.textContent = "🔄 Syncing...";
-        
         const { data, error } = await supabaseClient.from('flights').select('*');
         if (!error && data) {
           const merged = [...flights];
-          data.forEach(remoteFlight => {
-            if (!merged.some(f => f.id === remoteFlight.id)) {
-              merged.push(remoteFlight);
-            }
-          });
+          data.forEach(rf => { if (!merged.some(f => f.id === rf.id)) merged.push(rf); });
           flights = merged;
           reindexFlightNumbers();
           localStorage.setItem('speedfly_flights', JSON.stringify(flights));
@@ -716,20 +843,12 @@
 
     async function pushFlightToCloud(flight) {
       if (!supabaseClient || !navigator.onLine) return;
-      try {
-        await supabaseClient.from('flights').upsert([flight]);
-      } catch (e) {
-        console.log("Cloud push failed, will sync later");
-      }
+      try { await supabaseClient.from('flights').upsert([flight]); } catch (e) {}
     }
 
     async function deleteFlightFromCloud(id) {
       if (!supabaseClient || !navigator.onLine) return;
-      try {
-        await supabaseClient.from('flights').delete().eq('id', id);
-      } catch (e) {
-        console.log("Cloud delete failed");
-      }
+      try { await supabaseClient.from('flights').delete().eq('id', id); } catch (e) {}
     }
 
     function updateElevationForSelectedSite() {
@@ -760,7 +879,6 @@
       e.preventDefault();
       const elevVal = parseInt(launchElevation.value) || 0;
       const wSpeed = document.getElementById('windSpeed').value.trim();
-      
       const rawDateVal = flightDateInput.value;
       const rawTimeVal = flightTimeInput.value;
 
@@ -768,50 +886,33 @@
       if (rawDateVal) {
         const parts = rawDateVal.split('-');
         if (parts.length === 3) {
-          const d = new Date(parts[0], parts[1] - 1, parts[2]);
-          formattedDate = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+          formattedDate = new Date(parts[0], parts[1] - 1, parts[2]).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
         }
       }
 
       if (editingFlightId) {
-        const flightIndex = flights.findIndex(f => f.id === editingFlightId);
-        if (flightIndex !== -1) {
-          flights[flightIndex] = {
-            ...flights[flightIndex],
-            date: formattedDate,
-            rawDate: rawDateVal,
-            rawTime: rawTimeVal,
-            wing: selectedWing,
-            site: launchSiteSelect.value,
-            elevation: elevVal,
+        const idx = flights.findIndex(f => f.id === editingFlightId);
+        if (idx !== -1) {
+          flights[idx] = {
+            ...flights[idx],
+            date: formattedDate, rawDate: rawDateVal, rawTime: rawTimeVal,
+            wing: selectedWing, site: launchSiteSelect.value, elevation: elevVal,
             launchType: selectedLaunchType,
             windSpeed: wSpeed ? (wSpeed.includes('kt') ? wSpeed : `${wSpeed} kt`) : '',
-            windDesc: selectedWindDesc,
-            compass: selectedCompass,
-            relativeWind: selectedRelativeWind,
+            windDesc: selectedWindDesc, compass: selectedCompass, relativeWind: selectedRelativeWind,
             notes: document.getElementById('notes').value.trim()
           };
-          pushFlightToCloud(flights[flightIndex]);
+          pushFlightToCloud(flights[idx]);
         }
         resetForm();
       } else {
         const newFlight = {
-          id: Date.now(),
-          flightNum: 0,
-          date: formattedDate,
-          rawDate: rawDateVal,
-          rawTime: rawTimeVal,
-          wing: selectedWing,
-          site: launchSiteSelect.value,
-          elevation: elevVal,
-          launchType: selectedLaunchType,
-          windSpeed: wSpeed ? `${wSpeed} kt` : '',
-          windDesc: selectedWindDesc,
-          compass: selectedCompass,
-          relativeWind: selectedRelativeWind,
+          id: Date.now(), flightNum: 0, date: formattedDate, rawDate: rawDateVal, rawTime: rawTimeVal,
+          wing: selectedWing, site: launchSiteSelect.value, elevation: elevVal,
+          launchType: selectedLaunchType, windSpeed: wSpeed ? `${wSpeed} kt` : '',
+          windDesc: selectedWindDesc, compass: selectedCompass, relativeWind: selectedRelativeWind,
           notes: document.getElementById('notes').value.trim()
         };
-
         flights.push(newFlight);
         pushFlightToCloud(newFlight);
         resetForm();
@@ -856,13 +957,10 @@
       document.getElementById('windSpeed').value = '';
     }
 
-    cancelEditBtn.addEventListener('click', () => {
-      resetForm();
-      render();
-    });
+    cancelEditBtn.addEventListener('click', resetForm);
 
     function deleteFlight(id, flightNum) {
-      if (confirm(`Are you sure you want to delete Flight #${flightNum}?`)) {
+      if (confirm(`Delete Flight #${flightNum}?`)) {
         if (editingFlightId === id) resetForm();
         flights = flights.filter(f => f.id !== id);
         reindexFlightNumbers();
@@ -872,7 +970,6 @@
       }
     }
 
-    // --- EDITABLE LAUNCH SITE NAMES & ELEVATIONS ---
     function renderSettings() {
       const sitesList = document.getElementById('sitesSettingsList');
       sitesList.innerHTML = Object.keys(siteElevations).map(site => `
@@ -895,13 +992,12 @@
     window.updateSiteName = function(oldName, newName) {
       const trimmedNew = newName.trim();
       if (!trimmedNew || oldName === trimmedNew) return;
-      
       const currentElev = siteElevations[oldName];
       delete siteElevations[oldName];
       siteElevations[trimmedNew] = currentElev;
-      
       localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
       populateSitesDropdown();
+      populateFilterDropdowns();
       renderSettings();
     };
 
@@ -916,17 +1012,19 @@
         delete siteElevations[site];
         localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
         populateSitesDropdown();
+        populateFilterDropdowns();
         renderSettings();
       }
     };
 
     window.deleteWing = function(wingName) {
-      if (customWings.length <= 1) return alert("You must keep at least one wing model!");
+      if (customWings.length <= 1) return alert("Must keep at least one wing!");
       if (confirm(`Remove wing "${wingName}"?`)) {
         customWings = customWings.filter(w => w !== wingName);
         localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
         if (selectedWing === wingName) selectedWing = customWings[0];
         populateWingsUI();
+        populateFilterDropdowns();
         renderSettings();
       }
     };
@@ -940,6 +1038,7 @@
       document.getElementById('newSiteName').value = '';
       document.getElementById('newSiteElev').value = '';
       populateSitesDropdown();
+      populateFilterDropdowns();
       renderSettings();
     });
 
@@ -950,26 +1049,104 @@
         customWings.push(wing);
         localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
         populateWingsUI();
+        populateFilterDropdowns();
         renderSettings();
       }
       document.getElementById('newWingName').value = '';
     });
 
-    document.getElementById('manualSyncBtn').addEventListener('click', () => {
-      syncWithCloud();
+    document.getElementById('manualSyncBtn').addEventListener('click', syncWithCloud);
+
+    // CALENDAR LOGIC
+    function renderCalendar() {
+      const year = calCurrentDate.getFullYear();
+      const month = calCurrentDate.getMonth();
+      const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+      
+      document.getElementById('calTitle').textContent = `${monthNames[month]} ${year}`;
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+      const flightDatesSet = new Set(flights.map(f => f.rawDate).filter(Boolean));
+
+      let gridHtml = '';
+      for (let i = 0; i < firstDay; i++) {
+        gridHtml += `<div class="cal-cell empty"></div>`;
+      }
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const hasFlight = flightDatesSet.has(dateStr);
+        const isSelected = selectedCalFilterDate === dateStr;
+
+        gridHtml += `
+          <div class="cal-cell ${hasFlight ? 'has-flight' : ''} ${isSelected ? 'selected-date' : ''}" 
+               onclick="toggleCalendarDateFilter('${dateStr}')">
+            ${d}
+          </div>
+        `;
+      }
+      document.getElementById('calendarDaysGrid').innerHTML = gridHtml;
+    }
+
+    window.toggleCalendarDateFilter = function(dateStr) {
+      selectedCalFilterDate = (selectedCalFilterDate === dateStr) ? null : dateStr;
+      renderCalendar();
+      render();
+    };
+
+    document.getElementById('calPrevBtn').addEventListener('click', () => {
+      calCurrentDate.setMonth(calCurrentDate.getMonth() - 1);
+      renderCalendar();
     });
+
+    document.getElementById('calNextBtn').addEventListener('click', () => {
+      calCurrentDate.setMonth(calCurrentDate.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // HISTOGRAM LOGIC
+    function renderHistogram() {
+      const bins = [
+        { label: '<500ft', min: 0, max: 499, count: 0 },
+        { label: '500-1k', min: 500, max: 999, count: 0 },
+        { label: '1k-1.8k', min: 1000, max: 1799, count: 0 },
+        { label: '1.8k-3k', min: 1800, max: 2999, count: 0 },
+        { label: '3k+ ft', min: 3000, max: 99999, count: 0 }
+      ];
+
+      flights.forEach(f => {
+        const elev = f.elevation || 0;
+        const bin = bins.find(b => elev >= b.min && elev <= b.max);
+        if (bin) bin.count++;
+      });
+
+      const maxCount = Math.max(...bins.map(b => b.count), 1);
+      const histoContainer = document.getElementById('histogramContainer');
+
+      histoContainer.innerHTML = bins.map(b => {
+        const heightPct = (b.count / maxCount) * 80;
+        return `
+          <div class="histo-bar-wrap">
+            <div class="histo-count">${b.count > 0 ? b.count : ''}</div>
+            <div class="histo-bar" style="height: ${Math.max(heightPct, 4)}%;"></div>
+            <div class="histo-label">${b.label}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    filterWingSelect.addEventListener('change', render);
+    filterSiteSelect.addEventListener('change', render);
 
     exportBtn.addEventListener('click', () => {
       if (flights.length === 0) return alert('No flights logged yet!');
       let csv = 'Flight #,Date,Time,Wing,Launch Site,Elevation (ft),Launch Type,Wind Speed,Wind Quality,Compass Dir,Relative Wind,Notes\n';
-      const sortedForExport = [...flights].reverse();
-      sortedForExport.forEach(f => {
+      [...flights].reverse().forEach(f => {
         csv += `"${f.flightNum}","${f.date}","${f.rawTime || ''}","${f.wing}","${f.site}","${f.elevation || 0}","${f.launchType}","${f.windSpeed || ''}","${f.windDesc || ''}","${f.compass || ''}","${f.relativeWind || ''}","${f.notes}"\n`;
       });
       const blob = new Blob([csv], { type: 'text/csv' });
-      const url = window.URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = url;
+      a.href = window.URL.createObjectURL(blob);
       a.download = `speedfly_logbook_${new Date().toISOString().slice(0,10)}.csv`;
       a.click();
     });
@@ -979,19 +1156,28 @@
       const totalVert = flights.reduce((sum, f) => sum + (f.elevation || 0), 0);
       totalVertBadge.textContent = `${totalVert.toLocaleString()} ft Vert`;
 
-      if (flights.length === 0) {
-        logList.innerHTML = `<p style="text-align: center; color: #94a3b8; margin-top: 20px;">No flights logged yet.</p>`;
+      renderCalendar();
+      renderHistogram();
+
+      let filteredFlights = [...flights];
+
+      const wingFilter = filterWingSelect.value;
+      const siteFilter = filterSiteSelect.value;
+
+      if (wingFilter) filteredFlights = filteredFlights.filter(f => f.wing === wingFilter);
+      if (siteFilter) filteredFlights = filteredFlights.filter(f => f.site === siteFilter);
+      if (selectedCalFilterDate) filteredFlights = filteredFlights.filter(f => f.rawDate === selectedCalFilterDate);
+
+      if (filteredFlights.length === 0) {
+        logList.innerHTML = `<p style="text-align: center; color: #94a3b8; margin-top: 20px;">No matching flights found.</p>`;
         return;
       }
 
-      const displayFlights = [...flights].reverse();
-
-      logList.innerHTML = displayFlights.map(f => `
+      logList.innerHTML = filteredFlights.reverse().map(f => `
         <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
           <div class="log-main">
             <div class="log-site-header">${f.site}</div>
             <div class="log-datetime-subheader">${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
-            
             <div class="log-meta"><b>${f.wing}</b> • ${f.elevation ? f.elevation + ' ft' : 'N/A'} • ${f.launchType}</div>
             <div class="log-meta">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind})</div>
             ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569; margin-top: 2px;">"${f.notes}"</div>` : ''}
@@ -1009,6 +1195,7 @@
 
     populateWingsUI();
     populateSitesDropdown();
+    populateFilterDropdowns();
     renderSettings();
     reindexFlightNumbers();
     render();
