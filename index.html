@@ -20,16 +20,40 @@
     }
 
     body {
-      background-color: #f8f9fa;
-      color: #111827;
+      color: #ffffff;
       margin: 0;
-      padding: 16px;
+      padding: 0;
       padding-bottom: 90px;
+      position: relative;
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-color: #0a1428;
+    }
+
+    /* FULLPAGE BACKGROUND IMAGE */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: url('IMG_7689_3.jpg');
+      background-size: cover;
+      background-position: center bottom;
+      z-index: -2;
+    }
+
+    /* SEMI-TRANSPARENT DARK OVERLAY FOR READABILITY */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(10, 20, 40, 0.65);
+      z-index: -1;
     }
 
     .container {
       max-width: 500px;
       margin: 0 auto;
+      padding: 16px;
     }
 
     header {
@@ -37,11 +61,11 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 16px;
-      background: #ffffff;
+      background: rgba(10, 20, 40, 0.75);
       padding: 14px 16px;
       border-radius: 12px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      border: 1px solid rgba(135, 206, 235, 0.35);
+      backdrop-filter: blur(8px);
     }
 
     .header-title-container {
@@ -59,7 +83,7 @@
       font-size: 1.2rem;
       margin: 0;
       font-weight: 800;
-      color: #0f172a;
+      color: #87ceeb;
     }
 
     .header-badges {
@@ -70,19 +94,19 @@
     }
 
     .stat-badge {
-      background: #f1f5f9;
-      color: #0f172a;
+      background: rgba(135, 206, 235, 0.15);
+      color: #ffffff;
       padding: 3px 8px;
       border-radius: 20px;
       font-weight: 700;
       font-size: 0.75rem;
-      border: 1px solid #cbd5e1;
+      border: 1px solid rgba(135, 206, 235, 0.4);
     }
 
     .sync-status {
       font-size: 0.7rem;
       font-weight: 600;
-      color: #059669;
+      color: #87ceeb;
     }
 
     .tab-content {
@@ -93,58 +117,47 @@
       display: block;
     }
 
-    .card {
-      background-color: #0f172a;
-      background-image: linear-gradient(rgba(15, 23, 42, 0.40), rgba(15, 23, 42, 0.50)), url('IMG_7689_3.jpg');
-      background-size: cover;
-      background-position: center top;
-      border-radius: 16px;
-      padding: 20px;
-      margin-bottom: 20px;
-      border: 1px solid #cbd5e1;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.2);
-      color: #ffffff;
-    }
-
-    .settings-card {
-      background: #ffffff;
+    .card, .settings-card {
+      background: rgba(10, 20, 40, 0.75);
       border-radius: 16px;
       padding: 16px;
-      border: 1px solid #e5e7eb;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+      border: 1px solid rgba(135, 206, 235, 0.4);
       margin-bottom: 16px;
+      backdrop-filter: blur(8px);
     }
 
     .settings-card h2 {
       margin-top: 0;
       font-size: 1.05rem;
-      color: #0f172a;
-      border-bottom: 1px solid #f1f5f9;
+      color: #87ceeb;
+      border-bottom: 1px solid rgba(135, 206, 235, 0.2);
       padding-bottom: 8px;
     }
 
     .form-group {
-      margin-bottom: 18px;
+      margin-bottom: 16px;
     }
 
+    /* FIXED DATE / TIME ROW ALIGNMENT */
     .date-time-row {
       display: flex;
-      gap: 10px;
+      gap: 12px;
+      width: 100%;
     }
 
     .date-time-row > div {
       flex: 1;
+      min-width: 0;
     }
 
     label {
       display: block;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      color: #ffffff;
-      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
-      margin-bottom: 8px;
+      color: #4ade80;
+      margin-bottom: 6px;
     }
 
     .pill-grid {
@@ -155,16 +168,15 @@
 
     .pill-btn {
       flex: 1 1 calc(33.33% - 6px);
-      min-height: 44px;
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(4px);
-      border: 2px solid rgba(255, 255, 255, 0.6);
-      border-radius: 10px;
-      color: #0f172a;
+      min-height: 40px;
+      background: rgba(10, 20, 40, 0.5);
+      backdrop-filter: blur(2px);
+      border: 1px solid #87ceeb;
+      border-radius: 8px;
+      color: #4ade80;
       font-weight: 700;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       cursor: pointer;
-      transition: all 0.15s ease;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -173,79 +185,75 @@
     }
 
     .pill-btn.active {
-      background: #0f172a;
-      color: #ffffff;
-      border-color: #ffffff;
+      background: #87ceeb;
+      color: #0a1428;
+      border-color: #87ceeb;
       font-weight: 800;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
     }
 
-    input[type="text"], input[type="number"], input[type="date"], input[type="time"], select, textarea {
+    input[type="text"], 
+    input[type="number"], 
+    input[type="date"], 
+    input[type="time"], 
+    select, 
+    textarea {
       width: 100%;
-      padding: 14px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      color: #0f172a;
-      font-size: 1rem;
+      height: 44px;
+      padding: 8px 12px;
+      background: rgba(10, 20, 40, 0.7);
+      border: 1px solid #4ade80;
+      border-radius: 8px;
+      color: #87ceeb;
+      font-size: 0.95rem;
       font-weight: 600;
       box-sizing: border-box;
+      -webkit-appearance: none;
     }
 
-    input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="time"]:focus, select:focus, textarea:focus {
+    textarea {
+      height: auto;
+      padding: 10px 12px;
+    }
+
+    input[type="text"]:focus, 
+    input[type="number"]:focus, 
+    input[type="date"]:focus, 
+    input[type="time"]:focus, 
+    select:focus, 
+    textarea:focus {
       outline: none;
-      border-color: #0f172a;
-      background: #ffffff;
+      border-color: #87ceeb;
+      background: rgba(10, 20, 40, 0.9);
     }
 
     .submit-btn {
       width: 100%;
-      min-height: 54px;
-      background: #0f172a;
-      color: #ffffff;
-      border: 2px solid #ffffff;
-      border-radius: 12px;
-      font-size: 1.1rem;
+      min-height: 50px;
+      background: #22c55e;
+      color: #0a1428;
+      border: none;
+      border-radius: 10px;
+      font-size: 1.05rem;
       font-weight: 800;
       cursor: pointer;
-      transition: background 0.15s ease;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      margin-top: 6px;
     }
 
     .submit-btn.editing {
-      background: #2563eb;
-      border-color: #60a5fa;
+      background: #87ceeb;
     }
 
     .cancel-btn {
       width: 100%;
       min-height: 40px;
-      background: rgba(255, 255, 255, 0.2);
+      background: rgba(135, 206, 235, 0.15);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.5);
-      border-radius: 10px;
-      font-size: 0.9rem;
+      border: 1px solid rgba(135, 206, 235, 0.4);
+      border-radius: 8px;
+      font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
       margin-top: 8px;
-    }
-
-    .history-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-
-    .export-btn {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      color: #334155;
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
     }
 
     /* CALENDAR WIDGET */
@@ -259,12 +267,13 @@
     .calendar-title {
       font-weight: 800;
       font-size: 0.95rem;
-      color: #0f172a;
+      color: #87ceeb;
     }
 
     .calendar-nav-btn {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
+      background: rgba(135, 206, 235, 0.15);
+      border: 1px solid rgba(135, 206, 235, 0.4);
+      color: #ffffff;
       border-radius: 6px;
       padding: 2px 8px;
       cursor: pointer;
@@ -281,7 +290,7 @@
     .cal-day-label {
       font-size: 0.7rem;
       font-weight: 700;
-      color: #64748b;
+      color: #4ade80;
       padding-bottom: 4px;
     }
 
@@ -289,10 +298,9 @@
       padding: 6px 0;
       font-size: 0.8rem;
       border-radius: 6px;
-      background: #f8fafc;
-      color: #64748b;
+      background: rgba(135, 206, 235, 0.05);
+      color: rgba(255, 255, 255, 0.6);
       cursor: pointer;
-      position: relative;
     }
 
     .cal-cell.empty {
@@ -301,13 +309,13 @@
     }
 
     .cal-cell.has-flight {
-      background: #0f172a;
-      color: #ffffff;
+      background: #87ceeb;
+      color: #0a1428;
       font-weight: 800;
     }
 
     .cal-cell.selected-date {
-      outline: 2px solid #2563eb;
+      outline: 2px solid #4ade80;
       outline-offset: -2px;
     }
 
@@ -331,7 +339,7 @@
 
     .histo-bar {
       width: 100%;
-      background: #0f172a;
+      background: #87ceeb;
       border-radius: 4px 4px 0 0;
       min-height: 2px;
       transition: height 0.3s ease;
@@ -341,65 +349,64 @@
       font-size: 0.7rem;
       font-weight: 700;
       margin-bottom: 2px;
-      color: #0f172a;
+      color: #4ade80;
     }
 
     .histo-label {
       font-size: 0.65rem;
-      color: #64748b;
+      color: rgba(255, 255, 255, 0.7);
       margin-top: 4px;
       white-space: nowrap;
     }
 
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .export-btn {
+      background: rgba(135, 206, 235, 0.15);
+      border: 1px solid rgba(135, 206, 235, 0.4);
+      color: #ffffff;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
     .log-item {
-      background: #ffffff;
-      border: 1px solid #e5e7eb;
+      background: rgba(10, 20, 40, 0.75);
+      border: 1px solid rgba(135, 206, 235, 0.4);
       border-radius: 10px;
       padding: 14px;
       margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      position: relative;
-    }
-
-    .log-item.editing-active {
-      border: 2px solid #2563eb;
-      background: #eff6ff;
-    }
-
-    .log-main {
-      display: flex;
-      flex-direction: column;
-      gap: 3px;
-      padding-right: 12px;
-      flex: 1;
     }
 
     .log-site-header {
       font-weight: 800;
-      color: #0f172a;
+      color: #ffffff;
       font-size: 1.05rem;
     }
 
     .log-datetime-subheader {
       font-size: 0.82rem;
       font-weight: 700;
-      color: #2563eb;
+      color: #87ceeb;
       margin-bottom: 2px;
     }
 
     .log-meta {
       font-size: 0.85rem;
-      color: #475569;
+      color: rgba(255, 255, 255, 0.75);
     }
 
-    .log-right-col {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 8px;
-    }
+    .log-meta b { color: #87ceeb; }
 
     .action-row {
       display: flex;
@@ -407,9 +414,9 @@
     }
 
     .action-btn {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      color: #64748b;
+      background: rgba(135, 206, 235, 0.1);
+      border: 1px solid rgba(135, 206, 235, 0.3);
+      color: #ffffff;
       width: 28px;
       height: 28px;
       border-radius: 50%;
@@ -417,42 +424,25 @@
       align-items: center;
       justify-content: center;
       font-size: 0.8rem;
-      font-weight: 700;
       cursor: pointer;
-      transition: all 0.15s ease;
-      padding: 0;
-    }
-
-    .edit-btn:hover, .edit-btn:active {
-      background: #2563eb;
-      color: #ffffff;
-      border-color: #1d4ed8;
-    }
-
-    .delete-btn:hover, .delete-btn:active {
-      background: #ef4444;
-      color: #ffffff;
-      border-color: #dc2626;
     }
 
     .log-num {
       font-weight: 800;
       font-size: 1.1rem;
-      color: #0f172a;
+      color: #ffffff;
     }
 
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #ffffff;
-      border-top: 1px solid #e5e7eb;
+      bottom: 0; left: 0; right: 0;
+      background: rgba(10, 20, 40, 0.9);
+      border-top: 1px solid rgba(135, 206, 235, 0.4);
       display: flex;
       justify-content: space-around;
       padding: 8px 0;
-      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
       z-index: 1000;
+      backdrop-filter: blur(10px);
     }
 
     .nav-item {
@@ -461,20 +451,21 @@
       align-items: center;
       background: none;
       border: none;
-      color: #64748b;
+      color: rgba(135, 206, 235, 0.6);
       font-size: 0.75rem;
       font-weight: 700;
-      gap: 4px;
       cursor: pointer;
       width: 33.33%;
     }
 
     .nav-item.active {
-      color: #0f172a;
+      color: #87ceeb;
     }
 
-    .nav-icon {
-      font-size: 1.25rem;
+    .filter-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
     .settings-list-item {
@@ -482,35 +473,24 @@
       gap: 8px;
       align-items: center;
       padding: 8px 0;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid rgba(135, 206, 235, 0.2);
     }
 
     .settings-list-item input[type="text"] {
-      padding: 8px;
-      font-size: 0.9rem;
+      padding: 6px 8px;
+      font-size: 0.85rem;
+      height: 36px;
       flex: 1;
     }
 
     .settings-list-item input[type="number"] {
       width: 80px;
-      padding: 8px;
-      font-size: 0.9rem;
-    }
-
-    .filter-row {
-      display: flex;
-      gap: 8px;
-      margin-bottom: 12px;
-    }
-
-    .filter-row select {
-      padding: 8px 12px;
+      padding: 6px 8px;
       font-size: 0.85rem;
+      height: 36px;
     }
 
-    .hidden {
-      display: none !important;
-    }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -518,10 +498,10 @@
   <div class="container">
     <header>
       <div class="header-title-container">
-        <svg class="app-icon-svg" viewBox="0 0 100 100" fill="#0f172a" xmlns="http://www.w3.org/2000/svg">
-          <path d="M10 40 Q 50 10 90 40 Q 50 25 10 40 Z" fill="#0f172a"/>
-          <path d="M20 40 L50 75 L80 40" stroke="#0f172a" stroke-width="3" fill="none"/>
-          <circle cx="50" cy="78" r="4" fill="#0f172a"/>
+        <svg class="app-icon-svg" viewBox="0 0 100 100" fill="#87ceeb" xmlns="http://www.w3.org/2000/svg">
+          <path d="M10 40 Q 50 10 90 40 Q 50 25 10 40 Z" fill="#87ceeb"/>
+          <path d="M20 40 L50 75 L80 40" stroke="#87ceeb" stroke-width="3" fill="none"/>
+          <circle cx="50" cy="78" r="4" fill="#87ceeb"/>
         </svg>
         <div>
           <h1>Speedfly Log</h1>
@@ -536,7 +516,7 @@
 
     <!-- TAB 1: LOG FLIGHT FORM -->
     <div id="tab-log" class="tab-content active">
-      <div class="card" id="formCard">
+      <div class="card">
         <form id="logForm">
           <div class="form-group">
             <div class="date-time-row">
@@ -618,9 +598,9 @@
       </div>
     </div>
 
-    <!-- TAB 2: FLIGHT LOG HISTORY WITH GRAPHICS & FILTERS -->
+    <!-- TAB 2: FLIGHT LOG HISTORY WITH GRAPHICS -->
     <div id="tab-history" class="tab-content">
-      <!-- CALENDAR WIDGET CARD -->
+      <!-- CALENDAR CARD -->
       <div class="settings-card">
         <div class="calendar-header">
           <button class="calendar-nav-btn" id="calPrevBtn">&lt;</button>
@@ -635,24 +615,23 @@
         <div class="calendar-grid" id="calendarDaysGrid"></div>
       </div>
 
-      <!-- HISTOGRAM WIDGET CARD -->
+      <!-- ELEVATION HISTOGRAM CARD -->
       <div class="settings-card">
         <h2>Elevation Distribution</h2>
         <div class="histogram-container" id="histogramContainer"></div>
       </div>
 
-      <!-- FILTERS & HEADER -->
-      <div class="history-header">
-        <h2 style="font-size: 1.1rem; margin: 0; color: #0f172a;">Flight History</h2>
-        <button class="export-btn" id="exportBtn">Export CSV</button>
+      <div class="card">
+        <div class="history-header">
+          <h2 style="font-size: 1.1rem; margin: 0; color: #87ceeb;">Flight History</h2>
+          <button class="export-btn" id="exportBtn">Export CSV</button>
+        </div>
+        <div class="filter-row">
+          <select id="filterWingSelect"><option value="">All Wings</option></select>
+          <select id="filterSiteSelect"><option value="">All Sites</option></select>
+        </div>
+        <div id="logList"></div>
       </div>
-
-      <div class="filter-row">
-        <select id="filterWingSelect"><option value="">All Wings</option></select>
-        <select id="filterSiteSelect"><option value="">All Sites</option></select>
-      </div>
-
-      <div id="logList"></div>
     </div>
 
     <!-- TAB 3: SETTINGS -->
@@ -663,7 +642,7 @@
         <div style="margin-top: 12px; display: flex; gap: 8px;">
           <input type="text" id="newSiteName" placeholder="New Launch Site Name">
           <input type="number" id="newSiteElev" placeholder="Elev (ft)" style="width: 100px;">
-          <button type="button" id="addNewSiteBtn" style="padding: 0 12px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
+          <button type="button" id="addNewSiteBtn" style="padding: 0 12px; background: #22c55e; color: #0a1428; border: none; border-radius: 8px; font-weight: 700;">Add</button>
         </div>
       </div>
 
@@ -671,15 +650,15 @@
         <h2>Manage Wings</h2>
         <div id="wingsSettingsList"></div>
         <div style="margin-top: 12px; display: flex; gap: 8px;">
-          <input type="text" id="newWingName" placeholder="New Wing (e.g. Mirage 13m)">
-          <button type="button" id="addNewWingBtn" style="padding: 0 12px; background: #0f172a; color: white; border: none; border-radius: 8px; font-weight: 600;">Add</button>
+          <input type="text" id="newWingName" placeholder="New Wing (e.g. Dragonfly 16m)">
+          <button type="button" id="addNewWingBtn" style="padding: 0 12px; background: #22c55e; color: #0a1428; border: none; border-radius: 8px; font-weight: 700;">Add</button>
         </div>
       </div>
 
       <div class="settings-card">
         <h2>Database & Cloud Sync</h2>
-        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 12px;">Connected to Supabase database for multi-device sync.</p>
-        <button type="button" id="manualSyncBtn" style="width: 100%; padding: 12px; background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; font-weight: 700; color: #0f172a; cursor: pointer;">🔄 Force Re-Sync with Cloud</button>
+        <p style="font-size: 0.85rem; color: rgba(255,255,255,0.7); margin-bottom: 12px;">Connected to Supabase database for multi-device sync.</p>
+        <button type="button" id="manualSyncBtn" style="width: 100%; padding: 12px; background: rgba(135,206,235,0.15); border: 1px solid rgba(135,206,235,0.4); border-radius: 8px; font-weight: 700; color: #ffffff; cursor: pointer;">🔄 Force Re-Sync with Cloud</button>
       </div>
     </div>
 
@@ -687,15 +666,15 @@
 
   <nav class="bottom-nav">
     <button class="nav-item active" data-tab="tab-log">
-      <span class="nav-icon">✏️</span>
+      <span style="font-size: 1.25rem; margin-bottom: 2px;">✏️</span>
       <span>Log Flight</span>
     </button>
     <button class="nav-item" data-tab="tab-history">
-      <span class="nav-icon">📋</span>
+      <span style="font-size: 1.25rem; margin-bottom: 2px;">📋</span>
       <span>Flight Log</span>
     </button>
     <button class="nav-item" data-tab="tab-settings">
-      <span class="nav-icon">⚙️</span>
+      <span style="font-size: 1.25rem; margin-bottom: 2px;">⚙️</span>
       <span>Settings</span>
     </button>
   </nav>
@@ -734,7 +713,7 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFkenRldm94YmdmdGFpZnd6YnlqIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTMyNDMxNjksImV4cCI6MjEwODgxOTE2OX0.vv4_h1HxtUW9IqnB5ogi9GisZO2bOPArqWcLDne_Its';
     
     let supabaseClient = null;
-    if (SUPABASE_URL !== 'YOUR_SUPABASE_URL_HERE' && window.supabase) {
+    if (window.supabase) {
       supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
@@ -793,18 +772,17 @@
     }
 
     function populateSitesDropdown() {
-      launchSiteSelect.innerHTML = Object.keys(siteElevations).map(site => `
+      const siteOptions = Object.keys(siteElevations).map(site => `
         <option value="${site}">${site}</option>
       `).join('');
+      launchSiteSelect.innerHTML = siteOptions;
+      filterSiteSelect.innerHTML = '<option value="">All Sites</option>' + siteOptions;
       updateElevationForSelectedSite();
     }
 
-    function populateFilterDropdowns() {
+    function populateFilterWings() {
       filterWingSelect.innerHTML = '<option value="">All Wings</option>' + 
         customWings.map(w => `<option value="${w}">${w}</option>`).join('');
-
-      filterSiteSelect.innerHTML = '<option value="">All Sites</option>' + 
-        Object.keys(siteElevations).map(s => `<option value="${s}">${s}</option>`).join('');
     }
 
     function getFlightTimestamp(rawDate, rawTime) {
@@ -815,7 +793,7 @@
 
     function reindexFlightNumbers() {
       flights.sort((a, b) => getFlightTimestamp(a.rawDate, a.rawTime) - getFlightTimestamp(b.rawDate, b.rawTime));
-      flights.forEach((f, idx) => { f.flightNum = idx + 1; });
+      flights.forEach((f, idx) => f.flightNum = idx + 1);
     }
 
     async function syncWithCloud() {
@@ -976,7 +954,7 @@
         <div class="settings-list-item">
           <input type="text" value="${site}" onchange="updateSiteName('${site}', this.value)">
           <input type="number" value="${siteElevations[site]}" onchange="updateSiteElev('${site}', this.value)" placeholder="ft">
-          <button type="button" class="action-btn delete-btn" onclick="deleteSite('${site}')">✕</button>
+          <button type="button" class="action-btn" onclick="deleteSite('${site}')">✕</button>
         </div>
       `).join('');
 
@@ -984,7 +962,7 @@
       wingsList.innerHTML = customWings.map(w => `
         <div class="settings-list-item">
           <span style="font-weight: 600; font-size: 0.9rem; flex: 1;">${w}</span>
-          <button type="button" class="action-btn delete-btn" onclick="deleteWing('${w}')">✕</button>
+          <button type="button" class="action-btn" onclick="deleteWing('${w}')">✕</button>
         </div>
       `).join('');
     }
@@ -997,7 +975,6 @@
       siteElevations[trimmedNew] = currentElev;
       localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
       populateSitesDropdown();
-      populateFilterDropdowns();
       renderSettings();
     };
 
@@ -1012,7 +989,6 @@
         delete siteElevations[site];
         localStorage.setItem('speedfly_site_elevations', JSON.stringify(siteElevations));
         populateSitesDropdown();
-        populateFilterDropdowns();
         renderSettings();
       }
     };
@@ -1024,7 +1000,7 @@
         localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
         if (selectedWing === wingName) selectedWing = customWings[0];
         populateWingsUI();
-        populateFilterDropdowns();
+        populateFilterWings();
         renderSettings();
       }
     };
@@ -1038,7 +1014,6 @@
       document.getElementById('newSiteName').value = '';
       document.getElementById('newSiteElev').value = '';
       populateSitesDropdown();
-      populateFilterDropdowns();
       renderSettings();
     });
 
@@ -1049,7 +1024,7 @@
         customWings.push(wing);
         localStorage.setItem('speedfly_wings', JSON.stringify(customWings));
         populateWingsUI();
-        populateFilterDropdowns();
+        populateFilterWings();
         renderSettings();
       }
       document.getElementById('newWingName').value = '';
@@ -1160,7 +1135,6 @@
       renderHistogram();
 
       let filteredFlights = [...flights];
-
       const wingFilter = filterWingSelect.value;
       const siteFilter = filterSiteSelect.value;
 
@@ -1169,23 +1143,23 @@
       if (selectedCalFilterDate) filteredFlights = filteredFlights.filter(f => f.rawDate === selectedCalFilterDate);
 
       if (filteredFlights.length === 0) {
-        logList.innerHTML = `<p style="text-align: center; color: #94a3b8; margin-top: 20px;">No matching flights found.</p>`;
+        logList.innerHTML = `<p style="text-align: center; color: rgba(255,255,255,0.6); margin-top: 20px;">No matching flights found.</p>`;
         return;
       }
 
       logList.innerHTML = filteredFlights.reverse().map(f => `
-        <div class="log-item ${editingFlightId === f.id ? 'editing-active' : ''}">
-          <div class="log-main">
+        <div class="log-item">
+          <div>
             <div class="log-site-header">${f.site}</div>
             <div class="log-datetime-subheader">${f.date}${f.rawTime ? ' @ ' + f.rawTime : ''}</div>
             <div class="log-meta"><b>${f.wing}</b> • ${f.elevation ? f.elevation + ' ft' : 'N/A'} • ${f.launchType}</div>
             <div class="log-meta">Wind: ${f.windSpeed ? f.windSpeed + ' ' : ''}${f.windDesc} (${f.compass} ${f.relativeWind})</div>
-            ${f.notes ? `<div class="log-meta" style="font-style: italic; color: #475569; margin-top: 2px;">"${f.notes}"</div>` : ''}
+            ${f.notes ? `<div class="log-meta" style="font-style: italic; margin-top: 2px;">"${f.notes}"</div>` : ''}
           </div>
-          <div class="log-right-col">
+          <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
             <div class="action-row">
-              <button type="button" class="action-btn edit-btn" onclick="editFlight(${f.id})" title="Edit entry">✏️</button>
-              <button type="button" class="action-btn delete-btn" onclick="deleteFlight(${f.id}, ${f.flightNum})" title="Delete entry">✕</button>
+              <button type="button" class="action-btn" onclick="editFlight(${f.id})">✏️</button>
+              <button type="button" class="action-btn" onclick="deleteFlight(${f.id}, ${f.flightNum})">✕</button>
             </div>
             <div class="log-num">#${f.flightNum}</div>
           </div>
@@ -1195,7 +1169,7 @@
 
     populateWingsUI();
     populateSitesDropdown();
-    populateFilterDropdowns();
+    populateFilterWings();
     renderSettings();
     reindexFlightNumbers();
     render();
